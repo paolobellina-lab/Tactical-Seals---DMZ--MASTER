@@ -7,13 +7,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DMZ Regia">
 <meta name="theme-color" content="#330000">
-<title>DMZ: REGIA MASTER v40</title>
+<title>DMZ: REGIA MASTER v2.3</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-master.png">
 
 <style>
-    /* STILE MASTER PANEL */
+    /* STILE MASTER PANEL (COMPLETAMENTE INTEGRATO ANTICACHE) */
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
     
     body { margin: 0; padding: 0; background: #050000; font-family: 'Share Tech Mono', 'Courier New', monospace; color: #0f0; overflow-y: auto; }
@@ -42,6 +42,7 @@
     .cfg-box { background: rgba(10,0,0,0.8); border: 1px solid #444; width: 80%; max-width: 300px; padding: 15px; display: none; flex-direction: column; gap: 10px; margin-top: -5px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); }
     .cfg-label { color: #aaa; font-size: 11px; text-align: left; }
     .cfg-input-edit { background: transparent; border: 1px dashed #555; color: #fff; width: 45px; text-align: center; font-family: monospace; font-size: 12px; }
+    .cfg-input-edit:focus { border-color: #f00; outline: none; }
     .cfg-checkbox-list label { color: #ddd; font-size: 13px; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; }
 </style>
 </head>
@@ -49,9 +50,9 @@
 
 <div id="master-screen" class="full-screen-ui">
     <h1>DMZ REGIA</h1>
-    <div class="version-tag">SYSTEM CORE v40</div>
+    <div class="version-tag">MASTER CORE v2.3</div>
     
-    <div id="status-label" class="status-label">CONNESSIONE...</div>
+    <div id="status-label" class="status-label">CONNESSIONE AL SATELLITE...</div>
 
     <div class="cfg-label" style="width:80%; max-width:300px; text-align:center; font-size:14px; color:#ff5555; margin-top:10px;">PRESET DI GIOCO:</div>
     <select id="config-slot" class="input-box" style="border-color: #ff5555; color: #ff5555; margin-top:5px;">
@@ -109,20 +110,25 @@
         <div class="cfg-label">INTERVALLO TRA STEP (MINUTI):</div><input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
     </div>
 
-    <div class="toggle-row"><span style="color:#e6e6fa; font-weight:bold;">CONTRATTI BASI (B) 📜</span><label class="switch"><input type="checkbox" id="cfg-contracts-toggle" checked onchange="toggleContractsMenu()"><span class="slider"></span></label></div>
+    <div class="toggle-row"><span style="color:#e6e6fa; font-weight:bold;">CONTRATTI E BASI (B) 📜</span><label class="switch"><input type="checkbox" id="cfg-contracts-toggle" checked onchange="toggleContractsMenu()"><span class="slider"></span></label></div>
     <div id="contracts-settings" class="cfg-box cfg-checkbox-list" style="display:flex;">
         <label><input type="checkbox" class="contract-cb" value="INTEL" checked> RECUPERO DATI SEGRETI</label>
         <label><input type="checkbox" class="contract-cb" value="DESTROY" checked> DISTRUZIONE SCORTE</label>
         <label><input type="checkbox" class="contract-cb" value="CARGO" checked> CONSEGNA MATERIALE (DROP)</label>
         <label><input type="checkbox" class="contract-cb" value="HUNT" checked> CACCIA ALLA SQUADRA (PvP)</label>
+        <label><input type="checkbox" class="contract-cb" value="NUKE" checked> <span style="color:#ff0;">MATERIALI NUCLEARI (Geiger)</span></label>
+        <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;">
+            <label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER LE BASI</label>
+        </div>
     </div>
 
-    <div class="toggle-row"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider"></span></label></div>
-    <div class="toggle-row"><span style="color:#ffd700; font-weight:bold; max-width: 60%; font-size:14px;">RICHIEDI CHIAVI PER SBLOCCARE OBIETTIVI 🔑</span><label class="switch"><input type="checkbox" id="cfg-keys-toggle" checked><span class="slider"></span></label></div>
+    <div class="toggle-row" style="display:none;"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider"></span></label></div>
 
     <div class="toggle-row"><span style="color:#e6b800; font-weight:bold;">ARMADIETTI E LOOT (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider"></span></label></div>
     <div id="locker-settings" class="cfg-box" style="display:flex;">
-        <div class="cfg-label" style="color:#8f8; font-weight:bold; margin-top:10px;">PROBABILITÀ DENARO (Somma = 100%):</div>
+        <label style="color:#ffd700; font-size:13px; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CHIUSI A CHIAVE (Loot Raro)</label>
+        
+        <div class="cfg-label" style="color:#8f8; font-weight:bold;">PROBABILITÀ DENARO (Somma = 100%):</div>
         <div style="display:flex; gap:5px; margin-bottom:5px;">
             <input type="number" id="money-amount" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px; color:#8f8; border-color:#8f8;" placeholder="IMPORTO $">
             <input type="number" id="money-chance" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px;" placeholder="% CHANCE">
@@ -160,7 +166,7 @@
     </div>
 
     <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA SU TUTTI I DISPOSITIVI</button>
-    <button class="btn-deploy" style="background:rgba(255,0,0,0.2); border-color:#f00; margin-top:20px; margin-bottom:50px;" onclick="masterStopGame()">⏹ TERMINA PARTITA</button>
+    <button class="btn-deploy" style="background:rgba(255,0,0,0.2); border-color:#f00; margin-top:20px; margin-bottom:50px;" onclick="masterStopGame()">⏹ TERMINA PARTITA E RESETTA</button>
 </div>
 
 <script type="module">
@@ -186,7 +192,7 @@
     };
     function isInsideArea(p, poly) { let x = p[0], y = p[1], inside = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { let intersect = ((poly[i][1] > y) != (poly[j][1] > y)) && (x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0]); if (intersect) inside = !inside; } return inside; }
 
-    // POOLS DI DEFAULT V40
+    // POOLS DI DEFAULT
     let masterStartPool = [ { name: "Benda Medica", value: 0, enabled: true }, { name: "MASCHERA GAS SEMPLICE", value: 500, enabled: true }, { name: "Kit Medico", value: 1500, enabled: false }, { name: "CHIAVE UNIVERSALE", value: 5000, enabled: false } ];
     let masterMoneyPool = [{ amount: 0, chance: 30, enabled: true }, { amount: 500, chance: 40, enabled: true }, { amount: 2500, chance: 30, enabled: true }];
     let masterLootPool = [ { name: "VUOTO", chance: 15, value: 0, enabled: true }, { name: "CHIAVE UNIVERSALE", chance: 5, value: 5000, enabled: true }, { name: "MASCHERA GAS SEMPLICE", chance: 15, value: 500, enabled: true }, { name: "Hard Disk Segreto", chance: 15, value: 2500, enabled: true }, { name: "Benda Medica", chance: 20, value: 0, enabled: true }, { name: "ATTACCO AEREO", chance: 10, value: 4000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", chance: 10, value: 5000, enabled: true }, { name: "UAV DI DISTURBO", chance: 10, value: 2500, enabled: true } ];
@@ -201,7 +207,7 @@
     window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
 
-    // FUNZIONI RENDER E MODIFICA ARRAY
+    // V2.3 - EDIT DELLE LISTE AL VOLO
     window.updateMoneyItem = function(idx, field, val) { masterMoneyPool[idx][field] = parseInt(val) || 0; };
     window.updateLootItem = function(idx, field, val) { masterLootPool[idx][field] = parseInt(val) || 0; };
     window.updateShopItem = function(idx, field, val) { masterShopPool[idx][field] = parseInt(val) || 0; };
@@ -211,22 +217,22 @@
     window.addStartGearItem = function() { let n=document.getElementById('start-name').value.toUpperCase(), v=parseInt(document.getElementById('start-value').value)||0; if(n){ masterStartPool.push({name:n, value:v, enabled: true}); document.getElementById('start-name').value=''; document.getElementById('start-value').value=''; window.renderStartGearList(); } };
     window.removeStartGearItem = function(idx) { masterStartPool.splice(idx, 1); window.renderStartGearList(); };
 
-    window.renderMoneyList = function() { const list = document.getElementById('money-list'); list.innerHTML = ""; masterMoneyPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#8f8; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleMoneyItem(${idx})" style="transform:scale(1.2);"><span>$${i.amount} (${i.chance}%)</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeMoneyItem(${idx})">X</span></div>`; }); };
+    window.renderMoneyList = function() { const list = document.getElementById('money-list'); list.innerHTML = ""; masterMoneyPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#8f8; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleMoneyItem(${idx})" style="transform:scale(1.2);"><span>$<input type="number" class="cfg-input-edit" style="color:#8f8; border-color:#8f8;" value="${i.amount}" onchange="updateMoneyItem(${idx}, 'amount', this.value)"> (<input type="number" class="cfg-input-edit" value="${i.chance}" onchange="updateMoneyItem(${idx}, 'chance', this.value)">%)</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeMoneyItem(${idx})">X</span></div>`; }); };
     window.toggleMoneyItem = function(idx) { masterMoneyPool[idx].enabled = !masterMoneyPool[idx].enabled; window.renderMoneyList(); };
     window.addMoneyItem = function() { let a=parseInt(document.getElementById('money-amount').value)||0, c=parseInt(document.getElementById('money-chance').value); if(c>0){ masterMoneyPool.push({amount:a, chance:c, enabled: true}); window.renderMoneyList(); } };
     window.removeMoneyItem = function(idx) { masterMoneyPool.splice(idx, 1); window.renderMoneyList(); };
 
-    window.renderLootList = function() { const list = document.getElementById('loot-list'); list.innerHTML = ""; masterLootPool.forEach((i, idx) => { let valStr = i.value > 0 ? `<span style="color:#8f8;">$${i.value}</span>` : `<span style="color:#aaa;">Consum.</span>`; let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#e6b800; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleLootItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} (${i.chance}%) - ${valStr}</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeLootItem(${idx})">X</span></div>`; }); };
+    window.renderLootList = function() { const list = document.getElementById('loot-list'); list.innerHTML = ""; masterLootPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#e6b800; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleLootItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} (<input type="number" class="cfg-input-edit" value="${i.chance}" onchange="updateLootItem(${idx}, 'chance', this.value)">%) [$<input type="number" class="cfg-input-edit" style="color:#e6b800; border-color:#e6b800;" value="${i.value}" onchange="updateLootItem(${idx}, 'value', this.value)">]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeLootItem(${idx})">X</span></div>`; }); };
     window.toggleLootItem = function(idx) { masterLootPool[idx].enabled = !masterLootPool[idx].enabled; window.renderLootList(); };
     window.addLootItem = function() { let n=document.getElementById('loot-name').value.toUpperCase(), c=parseInt(document.getElementById('loot-chance').value), v=parseInt(document.getElementById('loot-value').value)||0; if(n&&c>0){ masterLootPool.push({name:n, chance:c, value:v, enabled: true}); window.renderLootList(); } };
     window.removeLootItem = function(idx) { masterLootPool.splice(idx, 1); window.renderLootList(); };
 
-    window.renderShopList = function() { const list = document.getElementById('shop-list'); list.innerHTML = ""; masterShopPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0aa; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleShopItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} [$${i.price}]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeShopItem(${idx})">X</span></div>`; }); };
+    window.renderShopList = function() { const list = document.getElementById('shop-list'); list.innerHTML = ""; masterShopPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0aa; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleShopItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} [$<input type="number" class="cfg-input-edit" style="color:#0aa; border-color:#0aa;" value="${i.price}" onchange="updateShopItem(${idx}, 'price', this.value)">]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeShopItem(${idx})">X</span></div>`; }); };
     window.toggleShopItem = function(idx) { masterShopPool[idx].enabled = !masterShopPool[idx].enabled; window.renderShopList(); };
     window.addShopItem = function() { let n=document.getElementById('shop-name').value.toUpperCase(), p=parseInt(document.getElementById('shop-price').value); if(n&&p>0){ masterShopPool.push({name:n, price:p, enabled:true}); window.renderShopList(); } };
     window.removeShopItem = function(idx) { masterShopPool.splice(idx, 1); window.renderShopList(); };
 
-    // SALVA / CARICA PRESET
+    // V2.3 - SALVATAGGIO PRESET
     let getVal = (id, def) => { let el = document.getElementById(id); return el ? (parseInt(el.value) || def) : def; };
     let getChk = (id, def) => { let el = document.getElementById(id); return el ? el.checked : def; };
     let getStr = (id, def) => { let el = document.getElementById(id); return el ? el.value : def; };
@@ -236,7 +242,8 @@
         let conf = { 
             loot: masterLootPool, money: masterMoneyPool, shop: masterShopPool, startPool: masterStartPool,
             teamSize: getVal('cfg-team-size', 4), bleedout: getVal('cfg-medic-bleedout', 60), cures: getVal('cfg-medic-cures', 2), revives: getVal('cfg-medic-revives', 1),
-            medicActive: getChk('cfg-medic-toggle', true), contractsActive: getChk('cfg-contracts-toggle', true), keysActive: getChk('cfg-keys-toggle', true),
+            medicActive: getChk('cfg-medic-toggle', true), contractsActive: getChk('cfg-contracts-toggle', true), 
+            keysBases: getChk('cfg-keys-bases', false), keysLockers: getChk('cfg-keys-lockers', true),
             gasActive: getChk('cfg-gas-toggle', false), gasLethal: getChk('cfg-gas-lethal', true), gasTime: getVal('cfg-gas-time', 30), gasSteps: getVal('cfg-gas-steps', 3), gasInterval: getVal('cfg-gas-interval', 10),
             startMode: getStr('cfg-start-mode', 'choice'), startLimit: getVal('cfg-start-limit', 2)
         };
@@ -260,7 +267,8 @@
             
             if(conf.medicActive !== undefined) { document.getElementById('cfg-medic-toggle').checked = conf.medicActive; window.toggleMedicMenu(); }
             if(conf.contractsActive !== undefined) { document.getElementById('cfg-contracts-toggle').checked = conf.contractsActive; window.toggleContractsMenu(); }
-            if(conf.keysActive !== undefined) document.getElementById('cfg-keys-toggle').checked = conf.keysActive;
+            if(conf.keysBases !== undefined) document.getElementById('cfg-keys-bases').checked = conf.keysBases;
+            if(conf.keysLockers !== undefined) document.getElementById('cfg-keys-lockers').checked = conf.keysLockers;
             if(conf.gasActive !== undefined) { document.getElementById('cfg-gas-toggle').checked = conf.gasActive; window.toggleGasMenu(); }
             if(conf.gasLethal !== undefined) document.getElementById('cfg-gas-lethal').checked = conf.gasLethal;
             
@@ -273,7 +281,7 @@
         } else alert("Nessun salvataggio trovato per: " + slot);
     };
 
-    // AVVIO PARTITA
+    // AVVIO PARTITA MASTER
     window.masterStartGame = function() {
         let startMode = document.getElementById('cfg-start-mode').value; let startLimit = parseInt(document.getElementById('cfg-start-limit').value) || 2; let activeStartGear = masterStartPool.filter(i => i.enabled);
         let activeMoney = masterMoneyPool.filter(i => i.enabled); let activeLoot = masterLootPool.filter(i => i.enabled); let activeShop = masterShopPool.filter(i => i.enabled);
@@ -287,7 +295,8 @@
         } else { generatedExfils = fieldsDB[document.getElementById('m-field').value].exfils; }
 
         update(ref(db, 'dmz_settings'), {
-            status: 'running', activeField: document.getElementById('m-field').value, economy_active: document.getElementById('cfg-eco-toggle').checked, keys_active: document.getElementById('cfg-keys-toggle').checked,
+            status: 'running', activeField: document.getElementById('m-field').value, economy_active: document.getElementById('cfg-eco-toggle').checked,
+            keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
             start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-shops-toggle').checked, pool: activeShop }, 
             exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils },
             lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
