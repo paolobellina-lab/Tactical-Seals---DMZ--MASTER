@@ -7,13 +7,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DMZ Regia">
 <meta name="theme-color" content="#330000">
-<title>DMZ: REGIA MASTER v2.8</title>
+<title>DMZ: REGIA MASTER v2.9</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-master.png">
 
 <style>
+    /* STILE MASTER PANEL (COMPLETAMENTE INTEGRATO ANTICACHE) */
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    
     body { margin: 0; padding: 0; background: #050000; font-family: 'Share Tech Mono', 'Courier New', monospace; color: #0f0; overflow-y: auto; }
     .full-screen-ui { width:100%; min-height:100vh; background: radial-gradient(circle at center, #1a0505 0%, #000 100%); display: flex; flex-direction: column; align-items: center; padding: 30px 0 60px 0; }
     h1 { color: #ff0; text-shadow: 0 0 15px #ff0, 0 0 5px #ff0; font-size: 32px; letter-spacing: 4px; margin-bottom: 5px; text-align: center; }
@@ -42,7 +44,7 @@
 
 <div id="master-screen" class="full-screen-ui">
     <h1>DMZ REGIA</h1>
-    <div class="version-tag">MASTER CORE v2.8</div>
+    <div class="version-tag">MASTER CORE v2.9 (DYNAMIC GAS)</div>
     
     <div id="status-label" class="status-label">CONNESSIONE AL SATELLITE...</div>
 
@@ -84,7 +86,7 @@
         <div id="uav-periodic-box" style="display:none; margin-top:10px; border-top:1px dashed #0ff; padding-top:10px;"><div class="cfg-label">DURATA ACCENSIONE (Secondi):</div><input type="number" id="cfg-uav-on" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0ff; color:#fff;" value="30"><div class="cfg-label" style="margin-top:10px;">DURATA SPEGNIMENTO (Secondi):</div><input type="number" id="cfg-uav-off" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0ff; color:#fff;" value="120"></div>
     </div>
 
-    <div class="toggle-row"><span style="color:#ffa500; font-weight:bold;">SISTEMA MEDICO E SQUADRE 🏥</span><label class="switch"><input type="checkbox" id="cfg-medic-toggle" checked onchange="toggleMedicMenu()"><span class="slider"></span></label></div>
+    <div class="toggle-row"><span style="color:#ffa500; font-weight:bold;">SISTEMA MEDICO 🏥</span><label class="switch"><input type="checkbox" id="cfg-medic-toggle" checked onchange="toggleMedicMenu()"><span class="slider"></span></label></div>
     <div id="medic-settings" class="cfg-box" style="display:flex;">
         <div class="cfg-label" style="color:#ffa500; font-weight:bold;">MAX GIOCATORI PER SQUADRA:</div><input type="number" id="cfg-team-size" class="input-box" style="width:100%; margin:0; padding:8px;" value="4">
         <div class="cfg-label" style="margin-top:10px;">TEMPO DISSANGUAMENTO (SECONDI):</div><input type="number" id="cfg-medic-bleedout" class="input-box" style="width:100%; margin:0; padding:8px;" value="60">
@@ -92,13 +94,24 @@
         <div class="cfg-label">MAX RIANIMAZIONI (DA MORTO/ASSIMILAZIONE):</div><input type="number" id="cfg-medic-revives" class="input-box" style="width:100%; margin:0; padding:8px;" value="1">
     </div>
 
-    <div class="toggle-row"><span style="color:#f0f; font-weight:bold;">ZONA GAS ☢️</span><label class="switch"><input type="checkbox" id="cfg-gas-toggle" onchange="toggleGasMenu()"><span class="slider"></span></label></div>
-    <div id="gas-settings" class="cfg-box">
+    <div class="toggle-row"><span style="color:#f0f; font-weight:bold;">ZONA GAS DINAMICA ☢️</span><label class="switch"><input type="checkbox" id="cfg-gas-toggle" onchange="toggleGasMenu()"><span class="slider"></span></label></div>
+    <div id="gas-settings" class="cfg-box" style="border-color:#f0f;">
         <div class="toggle-row" style="margin-top:0; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px;">GAS LETALE</span><label class="switch"><input type="checkbox" id="cfg-gas-lethal" checked><span class="slider"></span></label></div>
         <div class="cfg-label" style="margin-top:10px;">TEMPO SOPRAVVIVENZA SENZA MASCHERA (SEC):</div><input type="number" id="cfg-gas-time" class="input-box" style="width:100%; margin:0; padding:8px;" value="30">
         <div class="toggle-row" style="margin-top:10px; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px; max-width:70%;">MOSTRA NEMICI CHE TOSSISCONO NEL GAS</span><label class="switch"><input type="checkbox" id="cfg-gas-vis" checked><span class="slider"></span></label></div>
-        <div class="cfg-label" style="margin-top:10px;">NUMERO RESTRINGIMENTI AREA (STEP):</div><input type="number" id="cfg-gas-steps" class="input-box" style="width:100%; margin:0; padding:8px;" value="3">
-        <div class="cfg-label">INTERVALLO TRA STEP (MINUTI):</div><input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
+        
+        <div style="border-top:1px solid #f0f; margin-top:15px; padding-top:10px;">
+            <div class="cfg-label" style="color:#fff;">CENTRO DELLA ZONA GAS:</div>
+            <select id="cfg-gas-center" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;">
+                <option value="FIELD">CENTRO DEL CAMPO</option>
+                </select>
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">RAGGI FASI (Metri, separati da virgola):</div>
+            <input type="text" id="cfg-gas-radii" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="800, 400, 200, 50" placeholder="Es. 800, 400, 200, 50">
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">VELOCITÀ RESTRINGIMENTO (m/s):</div>
+            <input type="number" id="cfg-gas-speed" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="1" step="0.5">
+            <div class="cfg-label" style="margin-top:10px;">INTERVALLO DI ATTESA TRA FASI (Minuti):</div>
+            <input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
+        </div>
     </div>
 
     <div class="toggle-row"><span style="color:#e6e6fa; font-weight:bold;">CONTRATTI E BASI (B) 📜</span><label class="switch"><input type="checkbox" id="cfg-contracts-toggle" checked onchange="toggleContractsMenu()"><span class="slider"></span></label></div>
@@ -110,6 +123,8 @@
         <label><input type="checkbox" class="contract-cb" value="NUKE" checked> <span style="color:#ff0;">MATERIALI NUCLEARI (Geiger)</span></label>
         <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER LE BASI</label></div>
     </div>
+
+    <div class="toggle-row" style="display:none;"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider"></span></label></div>
 
     <div class="toggle-row"><span style="color:#e6b800; font-weight:bold;">ARMADIETTI E LOOT (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider"></span></label></div>
     <div id="locker-settings" class="cfg-box" style="display:flex;">
@@ -181,8 +196,6 @@
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
     window.toggleUavMenu = function() { document.getElementById('uav-settings').style.display = document.getElementById('cfg-uav-toggle').checked ? 'flex' : 'none'; };
     window.updateUavModeUI = function() { document.getElementById('uav-periodic-box').style.display = (document.getElementById('cfg-uav-mode').value === 'periodic') ? 'block' : 'none'; };
-
-    // MOSTRA/NASCONDI OPZIONI IN BASE AI DUE TASTI
     window.toggleBackpackMenu = function() { document.getElementById('backpack-settings').style.display = document.getElementById('cfg-backpack-toggle').checked ? 'flex' : 'none'; };
     window.toggleEcoMenu = function() { document.getElementById('eco-money-settings').style.display = document.getElementById('cfg-eco-toggle').checked ? 'block' : 'none'; };
 
@@ -223,6 +236,7 @@
             keysBases: getChk('cfg-keys-bases', false), keysLockers: getChk('cfg-keys-lockers', true),
             backpackActive: getChk('cfg-backpack-toggle', true), ecoActive: getChk('cfg-eco-toggle', true),
             gasActive: getChk('cfg-gas-toggle', false), gasLethal: getChk('cfg-gas-lethal', true), gasTime: getVal('cfg-gas-time', 30), gasSteps: getVal('cfg-gas-steps', 3), gasInterval: getVal('cfg-gas-interval', 10),
+            gasCenter: getStr('cfg-gas-center', 'FIELD'), gasRadii: getStr('cfg-gas-radii', '800, 400, 200, 50'), gasSpeed: parseFloat(getVal('cfg-gas-speed', 1)),
             startMode: getStr('cfg-start-mode', 'choice'), startLimit: getVal('cfg-start-limit', 2),
             uavActive: getChk('cfg-uav-toggle', true), uavMode: getStr('cfg-uav-mode', 'none'), uavOn: getVal('cfg-uav-on', 30), uavOff: getVal('cfg-uav-off', 120)
         };
@@ -257,6 +271,9 @@
             if(conf.gasTime) document.getElementById('cfg-gas-time').value = conf.gasTime;
             if(conf.gasSteps) document.getElementById('cfg-gas-steps').value = conf.gasSteps;
             if(conf.gasInterval) document.getElementById('cfg-gas-interval').value = conf.gasInterval;
+            if(conf.gasCenter) document.getElementById('cfg-gas-center').value = conf.gasCenter;
+            if(conf.gasRadii) document.getElementById('cfg-gas-radii').value = conf.gasRadii;
+            if(conf.gasSpeed) document.getElementById('cfg-gas-speed').value = conf.gasSpeed;
 
             if(conf.uavActive !== undefined) { document.getElementById('cfg-uav-toggle').checked = conf.uavActive; window.toggleUavMenu(); }
             if(conf.uavMode !== undefined) { document.getElementById('cfg-uav-mode').value = conf.uavMode; window.updateUavModeUI(); }
@@ -282,19 +299,34 @@
 
         let uavConfig = { enabled: document.getElementById('cfg-uav-toggle').checked, mode: document.getElementById('cfg-uav-mode').value, onTime: parseInt(document.getElementById('cfg-uav-on').value) || 30, offTime: parseInt(document.getElementById('cfg-uav-off').value) || 120, startTime: Date.now() };
 
-        // INVIO REGOLE AL SATELLITE (FIREBASE)
+        // V2.9 LETTURA RAGGI E VELOCITA' GAS
+        let rawRadii = document.getElementById('cfg-gas-radii').value;
+        let radiiArr = rawRadii.split(',').map(r => parseInt(r.trim())).filter(r => !isNaN(r));
+        if(radiiArr.length === 0) radiiArr = [800, 400, 200, 50]; // Fallback
+        
+        let gasConfig = { 
+            enabled: document.getElementById('cfg-gas-toggle').checked, 
+            lethal: document.getElementById('cfg-gas-lethal').checked, 
+            survivalTime: parseInt(document.getElementById('cfg-gas-time').value) || 30, 
+            visibility: document.getElementById('cfg-gas-vis').checked, 
+            interval: parseInt(document.getElementById('cfg-gas-interval').value) || 10, 
+            startTime: Date.now(),
+            centerBase: document.getElementById('cfg-gas-center').value,
+            radii: radiiArr,
+            speed: parseFloat(document.getElementById('cfg-gas-speed').value) || 1
+        };
+
         update(ref(db, 'dmz_settings'), {
             status: 'running', activeField: document.getElementById('m-field').value, 
             backpack_active: document.getElementById('cfg-backpack-toggle').checked,
             economy_active: document.getElementById('cfg-eco-toggle').checked,
             keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
-            uav_config: uavConfig,
+            uav_config: uavConfig, gas_config: gasConfig,
             start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-shops-toggle').checked, pool: activeShop }, 
             exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils },
             lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
             team_config: { maxPlayers: parseInt(document.getElementById('cfg-team-size').value) || 4 },
-            medic_config: { active: document.getElementById('cfg-medic-toggle').checked, bleedout_time: parseInt(document.getElementById('cfg-medic-bleedout').value) || 60, maxCures: parseInt(document.getElementById('cfg-medic-cures').value) || 2, maxRevives: parseInt(document.getElementById('cfg-medic-revives').value) || 1 },
-            gas_config: { enabled: document.getElementById('cfg-gas-toggle').checked, lethal: document.getElementById('cfg-gas-lethal').checked, survivalTime: parseInt(document.getElementById('cfg-gas-time').value) || 30, visibility: document.getElementById('cfg-gas-vis').checked, steps: parseInt(document.getElementById('cfg-gas-steps').value) || 3, interval: parseInt(document.getElementById('cfg-gas-interval').value) || 10, startTime: Date.now() }
+            medic_config: { active: document.getElementById('cfg-medic-toggle').checked, bleedout_time: parseInt(document.getElementById('cfg-medic-bleedout').value) || 60, maxCures: parseInt(document.getElementById('cfg-medic-cures').value) || 2, maxRevives: parseInt(document.getElementById('cfg-medic-revives').value) || 1 }
         });
         
         set(ref(db, 'dmz_lockers'), null); set(ref(db, 'dmz_streaks'), null); set(ref(db, 'dmz_logs'), null); 
@@ -314,6 +346,14 @@
             return;
         }
         
+        // POPOLA MENU BASI GAS
+        let gasSelect = document.getElementById('cfg-gas-center');
+        masterBasesDB.forEach(b => {
+            let opt = document.createElement('option');
+            opt.value = b.id; opt.innerText = `BASE ${b.id.replace('B','')}`;
+            gasSelect.appendChild(opt);
+        });
+
         window.renderStartGearList(); window.updateStartModeUI();
         window.renderMoneyList(); window.renderLootList(); window.renderShopList();
         window.toggleUavMenu(); window.updateUavModeUI();
@@ -327,21 +367,11 @@
             }
         });
     };
-    // SISTEMA ANTI-STANDBY (WAKE LOCK) PER SCHERMO SEMPRE ACCESO
+
+    // --- WAKE LOCK ANTI-STANDBY ---
     let wakeLock = null;
-    async function keepScreenAwake() {
-        try {
-            if ('wakeLock' in navigator) {
-                wakeLock = await navigator.wakeLock.request('screen');
-                console.log("Schermo bloccato acceso.");
-            }
-        } catch (err) { console.log("Wake Lock error: " + err.message); }
-    }
-    // Riavvia il blocco se l'utente abbassa l'app e la riapre
-    document.addEventListener('visibilitychange', () => {
-        if (wakeLock !== null && document.visibilityState === 'visible') keepScreenAwake();
-    });
-    // Il browser richiede che l'utente tocchi lo schermo almeno una volta per attivarlo
+    async function keepScreenAwake() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); console.log("Wake Lock attivo."); } } catch (err) { } }
+    document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') keepScreenAwake(); });
     document.addEventListener('click', keepScreenAwake, { once: true });
 </script>
 </body>
