@@ -105,15 +105,19 @@
     <div id="locker-settings" class="cfg-box" style="display:flex;">
         <label style="color:#ffd700; font-size:13px; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CHIUSI A CHIAVE (Loot Raro)</label>
         
-        <div class="cfg-label" style="color:#8f8; font-weight:bold;">PROBABILITÀ DENARO (Se Eco ON):</div>
-        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="number" id="money-amount" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px; color:#8f8; border-color:#8f8;" placeholder="IMPORTO $"><input type="number" id="money-chance" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px;" placeholder="% CHANCE"></div>
-        <button class="btn-deploy" style="background:#030; border-color:#0f0; font-size:12px; padding:8px; margin:0;" onclick="addMoneyItem()">+ AGGIUNGI PACCHETTO DENARO</button>
-        <div id="money-list" style="margin-top:10px; border-top:1px dashed #8f8; padding-top:10px; max-height:100px; overflow-y:auto;"></div>
+        <div id="eco-money-settings" style="margin-bottom:10px;">
+            <div class="cfg-label" style="color:#8f8; font-weight:bold;">PROBABILITÀ DENARO:</div>
+            <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="number" id="money-amount" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px; color:#8f8; border-color:#8f8;" placeholder="IMPORTO $"><input type="number" id="money-chance" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px;" placeholder="% CHANCE"></div>
+            <button class="btn-deploy" style="background:#030; border-color:#0f0; font-size:12px; padding:8px; margin:0;" onclick="addMoneyItem()">+ AGGIUNGI PACCHETTO DENARO</button>
+            <div id="money-list" style="margin-top:10px; border-top:1px dashed #8f8; padding-top:10px; max-height:100px; overflow-y:auto;"></div>
+        </div>
         
-        <div class="cfg-label" style="color:#e6b800; font-weight:bold; margin-top:20px;">PROBABILITÀ OGGETTI (Se Zaino ON):</div>
-        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="loot-name" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px;" placeholder="NOME OGGETTO"><input type="number" id="loot-chance" class="input-box" style="width:25%; margin:0; padding:5px; font-size:10px;" placeholder="%"><input type="number" id="loot-value" class="input-box" style="width:35%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="VALORE $"></div>
-        <button class="btn-deploy" style="background:#330; border-color:#ff0; font-size:12px; padding:8px; margin:0;" onclick="addLootItem()">+ AGGIUNGI OGGETTO</button>
-        <div id="loot-list" style="margin-top:10px; border-top:1px dashed #ff0; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+        <div id="bp-loot-settings" style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
+            <div class="cfg-label" style="color:#e6b800; font-weight:bold;">PROBABILITÀ OGGETTI:</div>
+            <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="loot-name" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px;" placeholder="NOME OGGETTO"><input type="number" id="loot-chance" class="input-box" style="width:25%; margin:0; padding:5px; font-size:10px;" placeholder="%"><input type="number" id="loot-value" class="input-box" style="width:35%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="VALORE $"></div>
+            <button class="btn-deploy" style="background:#330; border-color:#ff0; font-size:12px; padding:8px; margin:0;" onclick="addLootItem()">+ AGGIUNGI OGGETTO</button>
+            <div id="loot-list" style="margin-top:10px; border-top:1px dashed #ff0; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+        </div>
     </div>
     
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">SISTEMA RADAR (UAV) 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
@@ -152,7 +156,7 @@
         <label><input type="checkbox" class="contract-cb" value="CARGO" checked> CONSEGNA MATERIALE (DROP)</label>
         <label><input type="checkbox" class="contract-cb" value="HUNT" checked> CACCIA ALLA SQUADRA (PvP)</label>
         <label><input type="checkbox" class="contract-cb" value="NUKE" checked> <span style="color:#ff0;">MATERIALI NUCLEARI (Geiger)</span></label>
-        <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER SBLOCCARE LE BASI</label></div>
+        <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER LE BASI</label></div>
     </div>
 
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">ESFILTRAZIONE (E/C) 🚁</span><label class="switch"><input type="checkbox" id="cfg-exfil-toggle" checked onchange="toggleExfilMenu()"><span class="slider"></span></label></div>
@@ -162,7 +166,7 @@
         <div class="cfg-label">TEMPO ARRIVO ELICOTTERO (MINUTI):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
     </div>
 
-    <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA SU TUTTI I DISPOSITIVI</button>
+    <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA</button>
     <button class="btn-deploy" style="background:rgba(255,0,0,0.2); border-color:#f00; margin-top:20px; margin-bottom:50px;" onclick="masterStopGame()">⏹ TERMINA PARTITA E RESETTA</button>
 </div>
 
@@ -229,15 +233,23 @@
     window.toggleGasMenu = function() { document.getElementById('gas-settings').style.display = document.getElementById('cfg-gas-toggle').checked ? 'block' : 'none'; };
     window.toggleExfilMenu = function() { document.getElementById('exfil-settings').style.display = document.getElementById('cfg-exfil-toggle').checked ? 'flex' : 'none'; };
     window.toggleLockerMenu = function() { document.getElementById('locker-settings').style.display = document.getElementById('cfg-lockers-toggle').checked ? 'flex' : 'none'; };
-    window.toggleShopMenu = function() { document.getElementById('shop-settings').style.display = document.getElementById('cfg-shops-toggle').checked ? 'flex' : 'none'; };
     window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
     window.toggleUavMenu = function() { document.getElementById('uav-settings').style.display = document.getElementById('cfg-uav-toggle').checked ? 'flex' : 'none'; };
     window.updateUavModeUI = function() { document.getElementById('uav-periodic-box').style.display = (document.getElementById('cfg-uav-mode').value === 'periodic') ? 'block' : 'none'; };
     
-    // GESTIONE VISIVA MENU SEPARATI
-    window.toggleBackpackMenu = function() { document.getElementById('backpack-settings').style.display = document.getElementById('cfg-backpack-toggle').checked ? 'flex' : 'none'; };
-    window.toggleEcoMenu = function() { document.getElementById('eco-settings').style.display = document.getElementById('cfg-eco-toggle').checked ? 'flex' : 'none'; };
+    window.toggleBackpackMenu = function() { 
+        let on = document.getElementById('cfg-backpack-toggle').checked;
+        document.getElementById('backpack-settings').style.display = on ? 'flex' : 'none'; 
+        let bls = document.getElementById('bp-loot-settings');
+        if(bls) bls.style.display = on ? 'block' : 'none';
+    };
+    window.toggleEcoMenu = function() { 
+        let on = document.getElementById('cfg-eco-toggle').checked;
+        document.getElementById('eco-settings').style.display = on ? 'flex' : 'none'; 
+        let ems = document.getElementById('eco-money-settings');
+        if(ems) ems.style.display = on ? 'block' : 'none';
+    };
 
     window.updateMoneyItem = function(idx, field, val) { masterMoneyPool[idx][field] = parseInt(val) || 0; };
     window.updateLootItem = function(idx, field, val) { masterLootPool[idx][field] = parseInt(val) || 0; };
@@ -356,9 +368,10 @@
             status: 'running', activeField: document.getElementById('m-field').value, 
             backpack_active: document.getElementById('cfg-backpack-toggle').checked,
             economy_active: document.getElementById('cfg-eco-toggle').checked,
+            lockers_active: document.getElementById('cfg-lockers-toggle').checked,
             keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
             uav_config: uavConfig, gas_config: gasConfig,
-            start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-shops-toggle').checked, pool: activeShop }, 
+            start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-eco-toggle').checked, pool: activeShop }, 
             exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils },
             lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
             team_config: { maxPlayers: parseInt(document.getElementById('cfg-team-size').value) || 4 },
