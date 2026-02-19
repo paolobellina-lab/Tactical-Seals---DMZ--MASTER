@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DMZ Regia">
 <meta name="theme-color" content="#330000">
-<title>DMZ: REGIA MASTER v3.0</title>
+<title>DMZ: REGIA MASTER v3.1</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-master.png">
@@ -60,7 +60,7 @@
 
 <div id="master-screen" class="full-screen-ui">
     <h1>DMZ REGIA</h1>
-    <div class="version-tag">MASTER CORE v3.0</div>
+    <div class="version-tag">MASTER CORE v3.1</div>
     
     <div id="status-label" class="status-label">CONNESSIONE AL SATELLITE...</div>
 
@@ -83,7 +83,7 @@
         <option value="campo5">CAMPO 5: TEST LOCALE</option>
     </select>
 
-    <div class="toggle-row"><span style="color:#0cf; font-weight:bold;">SISTEMA ZAINO E LOOT 🎒</span><label class="switch"><input type="checkbox" id="cfg-backpack-toggle" checked onchange="toggleBackpackMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div class="toggle-row"><span style="color:#0cf; font-weight:bold;">SISTEMA ZAINO E INVENTARIO 🎒</span><label class="switch"><input type="checkbox" id="cfg-backpack-toggle" checked onchange="toggleBackpackMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
     <div id="backpack-settings" class="cfg-box" style="display:flex; border-color:#0cf;">
         <div class="cfg-label" style="color:#0cf;">FORNITURA INIZIALE / BONUS:</div>
         <select id="cfg-start-mode" class="input-box" style="width:100%; margin:0; padding:8px; font-size:12px; border-color:#0cf; color:#0cf;" onchange="updateStartModeUI()"><option value="none">NESSUNO (Solo Magazzino Personale)</option><option value="fixed">FISSO (Bonus a tutti)</option><option value="choice" selected>A SCELTA (Bonus a scelta)</option></select>
@@ -93,7 +93,28 @@
         <div id="start-gear-list" style="margin-top:10px; border-top:1px solid #444; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
     </div>
 
-    <div class="toggle-row"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked onchange="toggleEcoMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div class="toggle-row"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO E NEGOZI 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked onchange="toggleEcoMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div id="eco-settings" class="cfg-box" style="display:flex; border-color:#8f8;">
+        <div class="cfg-label" style="color:#8f8;">LISTINO PREZZI NEGOZIO:</div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="shop-name" class="input-box" style="width:60%; margin:0; padding:5px; font-size:10px;" placeholder="OGGETTO"><input type="number" id="shop-price" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="PREZZO $"></div>
+        <button class="btn-deploy" style="background:#030; border-color:#8f8; font-size:12px; padding:8px; margin:0;" onclick="addShopItem()">+ AGGIUNGI IN VENDITA</button>
+        <div id="shop-list" style="margin-top:10px; border-top:1px solid #444; padding-top:10px; max-height:150px; overflow-y:auto; font-family:'Share Tech Mono', monospace;"></div>
+    </div>
+
+    <div class="toggle-row"><span style="color:#e6b800; font-weight:bold;">ARMADIETTI SUL CAMPO (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div id="locker-settings" class="cfg-box" style="display:flex;">
+        <label style="color:#ffd700; font-size:13px; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CHIUSI A CHIAVE (Loot Raro)</label>
+        
+        <div class="cfg-label" style="color:#8f8; font-weight:bold;">PROBABILITÀ DENARO (Se Eco ON):</div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="number" id="money-amount" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px; color:#8f8; border-color:#8f8;" placeholder="IMPORTO $"><input type="number" id="money-chance" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px;" placeholder="% CHANCE"></div>
+        <button class="btn-deploy" style="background:#030; border-color:#0f0; font-size:12px; padding:8px; margin:0;" onclick="addMoneyItem()">+ AGGIUNGI PACCHETTO DENARO</button>
+        <div id="money-list" style="margin-top:10px; border-top:1px dashed #8f8; padding-top:10px; max-height:100px; overflow-y:auto;"></div>
+        
+        <div class="cfg-label" style="color:#e6b800; font-weight:bold; margin-top:20px;">PROBABILITÀ OGGETTI (Se Zaino ON):</div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="loot-name" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px;" placeholder="NOME OGGETTO"><input type="number" id="loot-chance" class="input-box" style="width:25%; margin:0; padding:5px; font-size:10px;" placeholder="%"><input type="number" id="loot-value" class="input-box" style="width:35%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="VALORE $"></div>
+        <button class="btn-deploy" style="background:#330; border-color:#ff0; font-size:12px; padding:8px; margin:0;" onclick="addLootItem()">+ AGGIUNGI OGGETTO</button>
+        <div id="loot-list" style="margin-top:10px; border-top:1px dashed #ff0; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+    </div>
     
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">SISTEMA RADAR (UAV) 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
     <div id="uav-settings" class="cfg-box" style="display:flex; border-color:#0ff;">
@@ -115,18 +136,12 @@
         <div class="toggle-row" style="margin-top:0; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px;">GAS LETALE</span><label class="switch"><input type="checkbox" id="cfg-gas-lethal" checked><span class="slider"></span></label></div>
         <div class="cfg-label" style="margin-top:10px;">TEMPO SOPRAVVIVENZA SENZA MASCHERA (SEC):</div><input type="number" id="cfg-gas-time" class="input-box" style="width:100%; margin:0; padding:8px;" value="30">
         <div class="toggle-row" style="margin-top:10px; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px; max-width:70%;">MOSTRA NEMICI CHE TOSSISCONO NEL GAS</span><label class="switch"><input type="checkbox" id="cfg-gas-vis" checked><span class="slider"></span></label></div>
-        
         <div style="border-top:1px solid #f0f; margin-top:15px; padding-top:10px;">
             <div class="cfg-label" style="color:#fff;">CENTRO DELLA ZONA GAS:</div>
-            <select id="cfg-gas-center" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;">
-                <option value="FIELD">CENTRO DEL CAMPO</option>
-            </select>
-            <div class="cfg-label" style="margin-top:10px; color:#fff;">RAGGI FASI (Metri, separati da virgola):</div>
-            <input type="text" id="cfg-gas-radii" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="800, 400, 200, 50" placeholder="Es. 800, 400, 200, 50">
-            <div class="cfg-label" style="margin-top:10px; color:#fff;">VELOCITÀ RESTRINGIMENTO (m/s):</div>
-            <input type="number" id="cfg-gas-speed" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="1" step="0.5">
-            <div class="cfg-label" style="margin-top:10px;">INTERVALLO DI ATTESA TRA FASI (Minuti):</div>
-            <input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
+            <select id="cfg-gas-center" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;"><option value="FIELD">CENTRO DEL CAMPO</option></select>
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">RAGGI FASI (Metri, separati da virgola):</div><input type="text" id="cfg-gas-radii" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="800, 400, 200, 50" placeholder="Es. 800, 400, 200, 50">
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">VELOCITÀ RESTRINGIMENTO (m/s):</div><input type="number" id="cfg-gas-speed" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="1" step="0.5">
+            <div class="cfg-label" style="margin-top:10px;">INTERVALLO DI ATTESA TRA FASI (Minuti):</div><input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
         </div>
     </div>
 
@@ -137,32 +152,7 @@
         <label><input type="checkbox" class="contract-cb" value="CARGO" checked> CONSEGNA MATERIALE (DROP)</label>
         <label><input type="checkbox" class="contract-cb" value="HUNT" checked> CACCIA ALLA SQUADRA (PvP)</label>
         <label><input type="checkbox" class="contract-cb" value="NUKE" checked> <span style="color:#ff0;">MATERIALI NUCLEARI (Geiger)</span></label>
-        <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER LE BASI</label></div>
-    </div>
-
-    <div class="toggle-row" style="display:none;"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider"></span></label></div>
-
-    <div class="toggle-row"><span style="color:#e6b800; font-weight:bold;">ARMADIETTI E LOOT (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider"></span></label></div>
-    <div id="locker-settings" class="cfg-box" style="display:flex;">
-        <label style="color:#ffd700; font-size:13px; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CHIUSI A CHIAVE (Loot Raro)</label>
-        <div id="eco-money-settings">
-            <div class="cfg-label" style="color:#8f8; font-weight:bold;">PROBABILITÀ DENARO (Editabile):</div>
-            <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="number" id="money-amount" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px; color:#8f8; border-color:#8f8;" placeholder="IMPORTO $"><input type="number" id="money-chance" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px;" placeholder="% CHANCE"></div>
-            <button class="btn-deploy" style="background:#030; border-color:#0f0; font-size:12px; padding:8px; margin:0;" onclick="addMoneyItem()">+ AGGIUNGI PACCHETTO DENARO</button>
-            <div id="money-list" style="margin-top:10px; border-top:1px dashed #8f8; padding-top:10px; max-height:100px; overflow-y:auto;"></div>
-        </div>
-        <div class="cfg-label" style="color:#e6b800; font-weight:bold; margin-top:20px;">PROBABILITÀ OGGETTI (Editabile):</div>
-        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="loot-name" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px;" placeholder="NOME OGGETTO"><input type="number" id="loot-chance" class="input-box" style="width:25%; margin:0; padding:5px; font-size:10px;" placeholder="%"><input type="number" id="loot-value" class="input-box" style="width:35%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="VALORE $"></div>
-        <button class="btn-deploy" style="background:#330; border-color:#ff0; font-size:12px; padding:8px; margin:0;" onclick="addLootItem()">+ AGGIUNGI OGGETTO</button>
-        <div id="loot-list" style="margin-top:10px; border-top:1px dashed #ff0; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
-    </div>
-
-    <div class="toggle-row"><span style="color:#0aa; font-weight:bold;">NEGOZI E KILLSTREAKS 🛒</span><label class="switch"><input type="checkbox" id="cfg-shops-toggle" checked onchange="toggleShopMenu()"><span class="slider"></span></label></div>
-    <div id="shop-settings" class="cfg-box" style="display:flex;">
-        <div class="cfg-label">LISTINO PREZZI NEGOZIO:</div>
-        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="shop-name" class="input-box" style="width:60%; margin:0; padding:5px; font-size:10px;" placeholder="OGGETTO"><input type="number" id="shop-price" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="PREZZO $"></div>
-        <button class="btn-deploy" style="background:#333; border-color:#aaa; font-size:12px; padding:8px; margin:0;" onclick="addShopItem()">+ AGGIUNGI IN VENDITA</button>
-        <div id="shop-list" style="margin-top:10px; border-top:1px solid #444; padding-top:10px; max-height:150px; overflow-y:auto; font-family:'Share Tech Mono', monospace;"></div>
+        <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER SBLOCCARE LE BASI</label></div>
     </div>
 
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">ESFILTRAZIONE (E/C) 🚁</span><label class="switch"><input type="checkbox" id="cfg-exfil-toggle" checked onchange="toggleExfilMenu()"><span class="slider"></span></label></div>
@@ -172,7 +162,7 @@
         <div class="cfg-label">TEMPO ARRIVO ELICOTTERO (MINUTI):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
     </div>
 
-    <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA</button>
+    <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA SU TUTTI I DISPOSITIVI</button>
     <button class="btn-deploy" style="background:rgba(255,0,0,0.2); border-color:#f00; margin-top:20px; margin-bottom:50px;" onclick="masterStopGame()">⏹ TERMINA PARTITA E RESETTA</button>
 </div>
 
@@ -185,7 +175,7 @@
     const db = getDatabase(app);
 
     // SISTEMA DI ALERT TATTICO
-    window.tacticalAlert = function(msg, title = "SYSTEM ALERT", isGood = false) {
+    window.tacticalAlert = function(msg, title = "SYSTEM INFO", isGood = false) {
         document.getElementById('tactical-alert-title').innerText = title;
         document.getElementById('tactical-alert-title').style.color = isGood ? "#0f0" : "#f00";
         document.getElementById('tactical-alert-title').style.borderColor = isGood ? "#0f0" : "#f00";
@@ -193,7 +183,7 @@
         document.getElementById('tactical-alert-box').style.boxShadow = isGood ? "0 0 30px rgba(0,255,0,0.5)" : "0 0 30px rgba(255,0,0,0.5)";
         document.getElementById('tactical-alert-msg').innerText = msg;
         let btnColor = isGood ? "tactical-btn-ok" : "";
-        document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn ${btnColor}" onclick="closeTacticalAlert()">RICEVUTO</button>`;
+        document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn ${btnColor}" onclick="closeTacticalAlert()">OK</button>`;
         document.getElementById('tactical-alert-overlay').style.display = 'flex';
     };
 
@@ -244,8 +234,10 @@
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
     window.toggleUavMenu = function() { document.getElementById('uav-settings').style.display = document.getElementById('cfg-uav-toggle').checked ? 'flex' : 'none'; };
     window.updateUavModeUI = function() { document.getElementById('uav-periodic-box').style.display = (document.getElementById('cfg-uav-mode').value === 'periodic') ? 'block' : 'none'; };
+    
+    // GESTIONE VISIVA MENU SEPARATI
     window.toggleBackpackMenu = function() { document.getElementById('backpack-settings').style.display = document.getElementById('cfg-backpack-toggle').checked ? 'flex' : 'none'; };
-    window.toggleEcoMenu = function() { document.getElementById('eco-money-settings').style.display = document.getElementById('cfg-eco-toggle').checked ? 'block' : 'none'; };
+    window.toggleEcoMenu = function() { document.getElementById('eco-settings').style.display = document.getElementById('cfg-eco-toggle').checked ? 'flex' : 'none'; };
 
     window.updateMoneyItem = function(idx, field, val) { masterMoneyPool[idx][field] = parseInt(val) || 0; };
     window.updateLootItem = function(idx, field, val) { masterLootPool[idx][field] = parseInt(val) || 0; };
@@ -282,7 +274,7 @@
             teamSize: getVal('cfg-team-size', 4), bleedout: getVal('cfg-medic-bleedout', 60), cures: getVal('cfg-medic-cures', 2), revives: getVal('cfg-medic-revives', 1),
             medicActive: getChk('cfg-medic-toggle', true), contractsActive: getChk('cfg-contracts-toggle', true), 
             keysBases: getChk('cfg-keys-bases', false), keysLockers: getChk('cfg-keys-lockers', true),
-            backpackActive: getChk('cfg-backpack-toggle', true), ecoActive: getChk('cfg-eco-toggle', true),
+            backpackActive: getChk('cfg-backpack-toggle', true), ecoActive: getChk('cfg-eco-toggle', true), lockersActive: getChk('cfg-lockers-toggle', true),
             gasActive: getChk('cfg-gas-toggle', false), gasLethal: getChk('cfg-gas-lethal', true), gasTime: getVal('cfg-gas-time', 30), gasSteps: getVal('cfg-gas-steps', 3), gasInterval: getVal('cfg-gas-interval', 10),
             gasCenter: getStr('cfg-gas-center', 'FIELD'), gasRadii: getStr('cfg-gas-radii', '800, 400, 200, 50'), gasSpeed: parseFloat(getVal('cfg-gas-speed', 1)),
             startMode: getStr('cfg-start-mode', 'choice'), startLimit: getVal('cfg-start-limit', 2),
@@ -313,6 +305,7 @@
             
             if(conf.backpackActive !== undefined) { document.getElementById('cfg-backpack-toggle').checked = conf.backpackActive; window.toggleBackpackMenu(); }
             if(conf.ecoActive !== undefined) { document.getElementById('cfg-eco-toggle').checked = conf.ecoActive; window.toggleEcoMenu(); }
+            if(conf.lockersActive !== undefined) { document.getElementById('cfg-lockers-toggle').checked = conf.lockersActive; window.toggleLockerMenu(); }
 
             if(conf.gasActive !== undefined) { document.getElementById('cfg-gas-toggle').checked = conf.gasActive; window.toggleGasMenu(); }
             if(conf.gasLethal !== undefined) document.getElementById('cfg-gas-lethal').checked = conf.gasLethal;
@@ -358,6 +351,7 @@
             centerBase: document.getElementById('cfg-gas-center').value, radii: radiiArr, speed: parseFloat(document.getElementById('cfg-gas-speed').value) || 1
         };
 
+        // INVIO REGOLE AL SATELLITE (FIREBASE)
         update(ref(db, 'dmz_settings'), {
             status: 'running', activeField: document.getElementById('m-field').value, 
             backpack_active: document.getElementById('cfg-backpack-toggle').checked,
@@ -399,7 +393,7 @@
         window.renderStartGearList(); window.updateStartModeUI();
         window.renderMoneyList(); window.renderLootList(); window.renderShopList();
         window.toggleUavMenu(); window.updateUavModeUI();
-        window.toggleBackpackMenu(); window.toggleEcoMenu();
+        window.toggleBackpackMenu(); window.toggleEcoMenu(); window.toggleLockerMenu();
 
         onValue(ref(db, 'dmz_settings'), (snapshot) => {
             let data = snapshot.val(); let sl = document.getElementById('status-label');
