@@ -7,30 +7,23 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DMZ Regia">
 <meta name="theme-color" content="#330000">
-<title>DMZ: REGIA MASTER v2.6</title>
+<title>DMZ: REGIA MASTER v2.7</title>
 
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-master.png">
 
 <style>
-    /* STILE MASTER PANEL (COMPLETAMENTE INTEGRATO ANTICACHE) */
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-    
     body { margin: 0; padding: 0; background: #050000; font-family: 'Share Tech Mono', 'Courier New', monospace; color: #0f0; overflow-y: auto; }
-    
     .full-screen-ui { width:100%; min-height:100vh; background: radial-gradient(circle at center, #1a0505 0%, #000 100%); display: flex; flex-direction: column; align-items: center; padding: 30px 0 60px 0; }
     h1 { color: #ff0; text-shadow: 0 0 15px #ff0, 0 0 5px #ff0; font-size: 32px; letter-spacing: 4px; margin-bottom: 5px; text-align: center; }
     .version-tag { color: #f55; font-size: 14px; margin-bottom: 20px; font-weight: bold; letter-spacing: 2px; }
-    
     .status-label { font-size: 18px; font-weight: bold; margin-bottom: 20px; padding: 10px; border: 1px solid #f00; color: #f00; text-align: center; width: 80%; max-width: 300px; background: rgba(255,0,0,0.1); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
     .status-label.running { border-color: #0f0; color: #0f0; background: rgba(0,255,0,0.1); }
-
     .input-box { background: rgba(20, 0, 0, 0.8); border: 1px solid #f00; color: #fff; padding: 15px; margin: 8px; width: 80%; max-width: 300px; text-align: center; font-size: 16px; font-family: 'Share Tech Mono', monospace; text-transform: uppercase; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); transition: 0.3s; outline: none; }
     .input-box:focus { background: rgba(40, 0, 0, 0.9); box-shadow: 0 0 10px #f00; }
-    
     .btn-deploy { background: linear-gradient(135deg, #440000 0%, #110000 100%); color: #fff; border: 1px solid #f00; padding: 15px 40px; font-size: 18px; font-family: 'Share Tech Mono', monospace; cursor: pointer; margin-top: 15px; box-shadow: 0 0 10px rgba(255,0,0,0.2); transition: 0.2s; width: 80%; max-width: 300px; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); text-transform: uppercase; letter-spacing: 1px; }
     .btn-deploy:active { background: #f00; color: #000; box-shadow: 0 0 20px #f00; }
-
     .toggle-row { display: flex; justify-content: space-between; align-items: center; background: rgba(20,0,0,0.5); padding: 12px; border: 1px solid #550000; margin-top: 15px; width: 80%; max-width: 300px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
     .switch { position: relative; display: inline-block; width: 50px; height: 24px; flex-shrink: 0; }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -38,7 +31,6 @@
     .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px); }
     input:checked + .slider { background-color: #f00; }
     input:checked + .slider:before { transform: translateX(26px); background-color: #000; }
-    
     .cfg-box { background: rgba(10,0,0,0.8); border: 1px solid #444; width: 80%; max-width: 300px; padding: 15px; display: none; flex-direction: column; gap: 10px; margin-top: -5px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); }
     .cfg-label { color: #aaa; font-size: 11px; text-align: left; }
     .cfg-input-edit { background: transparent; border: 1px dashed #555; color: #fff; width: 45px; text-align: center; font-family: monospace; font-size: 12px; }
@@ -50,7 +42,7 @@
 
 <div id="master-screen" class="full-screen-ui">
     <h1>DMZ REGIA</h1>
-    <div class="version-tag">MASTER CORE v2.6</div>
+    <div class="version-tag">MASTER CORE v2.7</div>
     
     <div id="status-label" class="status-label">CONNESSIONE AL SATELLITE...</div>
 
@@ -72,6 +64,8 @@
         <option value="campo2">CAMPO 2: ZONA URBANA</option>
         <option value="campo5">CAMPO 5: TEST LOCALE</option>
     </select>
+
+    <div class="toggle-row"><span style="color:#8f8; font-weight:bold;">SISTEMA ZAINO ED ECONOMIA 🎒</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider" style="background-color:#333;"></span></label></div>
     
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">SISTEMA RADAR (UAV) 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
     <div id="uav-settings" class="cfg-box" style="display:flex; border-color:#0ff;">
@@ -138,8 +132,6 @@
         </div>
     </div>
 
-    <div class="toggle-row" style="display:none;"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider"></span></label></div>
-
     <div class="toggle-row"><span style="color:#e6b800; font-weight:bold;">ARMADIETTI E LOOT (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider"></span></label></div>
     <div id="locker-settings" class="cfg-box" style="display:flex;">
         <label style="color:#ffd700; font-size:13px; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CHIUSI A CHIAVE (Loot Raro)</label>
@@ -193,6 +185,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // DATI MAPPA
     const masterBasesDB = [
         { id: "B1", lat: 45.679325, lng: 9.895191 }, { id: "B2", lat: 45.679668, lng: 9.896275 }, { id: "B3", lat: 45.679326, lng: 9.897387 }, { id: "B4", lat: 45.679367, lng: 9.899083 },
         { id: "B5", lat: 45.679264, lng: 9.900673 }, { id: "B6", lat: 45.680613, lng: 9.900875 }, { id: "B7", lat: 45.679424, lng: 9.90205 }, { id: "B8", lat: 45.679779, lng: 9.894188 },
@@ -207,11 +200,13 @@
     };
     function isInsideArea(p, poly) { let x = p[0], y = p[1], inside = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { let intersect = ((poly[i][1] > y) != (poly[j][1] > y)) && (x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0]); if (intersect) inside = !inside; } return inside; }
 
+    // POOLS DI DEFAULT
     let masterStartPool = [ { name: "Benda Medica", value: 0, enabled: true }, { name: "MASCHERA GAS SEMPLICE", value: 500, enabled: true }, { name: "Kit Medico", value: 1500, enabled: false }, { name: "CHIAVE UNIVERSALE", value: 5000, enabled: false } ];
     let masterMoneyPool = [{ amount: 0, chance: 30, enabled: true }, { amount: 500, chance: 40, enabled: true }, { amount: 2500, chance: 30, enabled: true }];
     let masterLootPool = [ { name: "VUOTO", chance: 15, value: 0, enabled: true }, { name: "CHIAVE UNIVERSALE", chance: 5, value: 5000, enabled: true }, { name: "MASCHERA GAS SEMPLICE", chance: 15, value: 500, enabled: true }, { name: "Hard Disk Segreto", chance: 15, value: 2500, enabled: true }, { name: "Benda Medica", chance: 20, value: 0, enabled: true }, { name: "ATTACCO AEREO", chance: 10, value: 4000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", chance: 10, value: 5000, enabled: true }, { name: "UAV DI DISTURBO", chance: 10, value: 2500, enabled: true } ];
     let masterShopPool = [ { name: "CHIAVE UNIVERSALE", price: 10000, enabled: true }, { name: "MASCHERA GAS COMPLETA", price: 3000, enabled: true }, { name: "Terminale UAV", price: 4000, enabled: true }, { name: "Kit Medico", price: 1500, enabled: true }, { name: "ATTACCO AEREO", price: 8000, enabled: true }, { name: "IMPULSO EMP", price: 12000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", price: 10000, enabled: true } ];
 
+    // FUNZIONI UI MENU
     window.updateStartModeUI = function() { document.getElementById('cfg-start-limit-box').style.display = (document.getElementById('cfg-start-mode').value === 'choice') ? 'block' : 'none'; };
     window.toggleGasMenu = function() { document.getElementById('gas-settings').style.display = document.getElementById('cfg-gas-toggle').checked ? 'block' : 'none'; };
     window.toggleExfilMenu = function() { document.getElementById('exfil-settings').style.display = document.getElementById('cfg-exfil-toggle').checked ? 'flex' : 'none'; };
@@ -220,10 +215,11 @@
     window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
     
-    // UI MENU UAV
+    // UI MENU UAV 
     window.toggleUavMenu = function() { document.getElementById('uav-settings').style.display = document.getElementById('cfg-uav-toggle').checked ? 'flex' : 'none'; };
     window.updateUavModeUI = function() { document.getElementById('uav-periodic-box').style.display = (document.getElementById('cfg-uav-mode').value === 'periodic') ? 'block' : 'none'; };
 
+    // EDIT DELLE LISTE AL VOLO 
     window.updateMoneyItem = function(idx, field, val) { masterMoneyPool[idx][field] = parseInt(val) || 0; };
     window.updateLootItem = function(idx, field, val) { masterLootPool[idx][field] = parseInt(val) || 0; };
     window.updateShopItem = function(idx, field, val) { masterShopPool[idx][field] = parseInt(val) || 0; };
@@ -248,6 +244,7 @@
     window.addShopItem = function() { let n=document.getElementById('shop-name').value.toUpperCase(), p=parseInt(document.getElementById('shop-price').value); if(n&&p>0){ masterShopPool.push({name:n, price:p, enabled:true}); window.renderShopList(); } };
     window.removeShopItem = function(idx) { masterShopPool.splice(idx, 1); window.renderShopList(); };
 
+    // SALVATAGGIO PRESET
     let getVal = (id, def) => { let el = document.getElementById(id); return el ? (parseInt(el.value) || def) : def; };
     let getChk = (id, def) => { let el = document.getElementById(id); return el ? el.checked : def; };
     let getStr = (id, def) => { let el = document.getElementById(id); return el ? el.value : def; };
@@ -259,6 +256,7 @@
             teamSize: getVal('cfg-team-size', 4), bleedout: getVal('cfg-medic-bleedout', 60), cures: getVal('cfg-medic-cures', 2), revives: getVal('cfg-medic-revives', 1),
             medicActive: getChk('cfg-medic-toggle', true), contractsActive: getChk('cfg-contracts-toggle', true), 
             keysBases: getChk('cfg-keys-bases', false), keysLockers: getChk('cfg-keys-lockers', true),
+            ecoActive: getChk('cfg-eco-toggle', true),
             gasActive: getChk('cfg-gas-toggle', false), gasLethal: getChk('cfg-gas-lethal', true), gasTime: getVal('cfg-gas-time', 30), gasSteps: getVal('cfg-gas-steps', 3), gasInterval: getVal('cfg-gas-interval', 10),
             startMode: getStr('cfg-start-mode', 'choice'), startLimit: getVal('cfg-start-limit', 2),
             uavActive: getChk('cfg-uav-toggle', true), uavMode: getStr('cfg-uav-mode', 'none'), uavOn: getVal('cfg-uav-on', 30), uavOff: getVal('cfg-uav-off', 120)
@@ -285,9 +283,11 @@
             if(conf.contractsActive !== undefined) { document.getElementById('cfg-contracts-toggle').checked = conf.contractsActive; window.toggleContractsMenu(); }
             if(conf.keysBases !== undefined) document.getElementById('cfg-keys-bases').checked = conf.keysBases;
             if(conf.keysLockers !== undefined) document.getElementById('cfg-keys-lockers').checked = conf.keysLockers;
+            
+            if(conf.ecoActive !== undefined) document.getElementById('cfg-eco-toggle').checked = conf.ecoActive;
+
             if(conf.gasActive !== undefined) { document.getElementById('cfg-gas-toggle').checked = conf.gasActive; window.toggleGasMenu(); }
             if(conf.gasLethal !== undefined) document.getElementById('cfg-gas-lethal').checked = conf.gasLethal;
-            
             if(conf.gasTime) document.getElementById('cfg-gas-time').value = conf.gasTime;
             if(conf.gasSteps) document.getElementById('cfg-gas-steps').value = conf.gasSteps;
             if(conf.gasInterval) document.getElementById('cfg-gas-interval').value = conf.gasInterval;
@@ -323,7 +323,8 @@
         };
 
         update(ref(db, 'dmz_settings'), {
-            status: 'running', activeField: document.getElementById('m-field').value, economy_active: true,
+            status: 'running', activeField: document.getElementById('m-field').value, 
+            economy_active: document.getElementById('cfg-eco-toggle').checked,
             keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
             uav_config: uavConfig,
             start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-shops-toggle').checked, pool: activeShop }, 
