@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DMZ Regia">
 <meta name="theme-color" content="#330000">
-<title>DMZ: REGIA MASTER v4.0</title>
+<title>DMZ: REGIA MASTER v4.2</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-master.png">
 <style>
@@ -55,7 +55,7 @@
 
 <div id="master-screen" class="full-screen-ui">
     <h1>DMZ REGIA</h1>
-    <div class="version-tag">MASTER CORE v4.0 (EXFIL LOGIC)</div>
+    <div class="version-tag">MASTER CORE v4.2</div>
     
     <div id="status-label" class="status-label">CONNESSIONE AL SATELLITE...</div>
 
@@ -119,7 +119,7 @@
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">SISTEMA RADAR (UAV) 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
     <div id="uav-settings" class="cfg-box" style="display:flex; border-color:#0ff;">
         <div class="cfg-label">MODALITÀ RADAR GLOBALE:</div>
-        <select id="cfg-uav-mode" class="input-box" style="width:100%; margin:0; padding:8px; font-size:12px; border-color:#0ff; color:#0ff;" onchange="updateUavModeUI()"><option value="none" selected>SPENTO (Solo tramite oggetti UAV)</option><option value="always">SEMPRE ATTIVO (Tutti vedono tutti)</option><option value="periodic">PERIODICO (Si accende e spegne)</option></select>
+        <select id="cfg-uav-mode" class="input-box" style="width:100%; margin:0; padding:8px; font-size:12px; border-color:#0ff; color:#0ff;" onchange="updateUavModeUI()"><option value="none" selected>SPENTO</option><option value="always">SEMPRE ATTIVO</option><option value="periodic">PERIODICO</option></select>
         <div id="uav-periodic-box" style="display:none; margin-top:10px; border-top:1px dashed #0ff; padding-top:10px;"><div class="cfg-label">DURATA ACCENSIONE (Secondi):</div><input type="number" id="cfg-uav-on" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0ff; color:#fff;" value="30"><div class="cfg-label" style="margin-top:10px;">DURATA SPEGNIMENTO (Secondi):</div><input type="number" id="cfg-uav-off" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0ff; color:#fff;" value="120"></div>
     </div>
 
@@ -128,7 +128,7 @@
         <div class="cfg-label" style="color:#ffa500; font-weight:bold;">MAX GIOCATORI PER SQUADRA:</div><input type="number" id="cfg-team-size" class="input-box" style="width:100%; margin:0; padding:8px;" value="4">
         <div class="cfg-label" style="margin-top:10px;">TEMPO DISSANGUAMENTO (SECONDI):</div><input type="number" id="cfg-medic-bleedout" class="input-box" style="width:100%; margin:0; padding:8px;" value="60">
         <div class="cfg-label" style="margin-top:10px;">MAX CURE CONSENTITE (DA FERITO):</div><input type="number" id="cfg-medic-cures" class="input-box" style="width:100%; margin:0; padding:8px;" value="2">
-        <div class="cfg-label">MAX RIANIMAZIONI (DA MORTO/ASSIMILAZIONE):</div><input type="number" id="cfg-medic-revives" class="input-box" style="width:100%; margin:0; padding:8px;" value="1">
+        <div class="cfg-label">MAX RIANIMAZIONI (DA MORTO):</div><input type="number" id="cfg-medic-revives" class="input-box" style="width:100%; margin:0; padding:8px;" value="1">
     </div>
 
     <div class="toggle-row"><span style="color:#f0f; font-weight:bold;">ZONA GAS DINAMICA ☢️</span><label class="switch"><input type="checkbox" id="cfg-gas-toggle" onchange="toggleGasMenu()"><span class="slider"></span></label></div>
@@ -136,13 +136,12 @@
         <div class="toggle-row" style="margin-top:0; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px;">GAS LETALE</span><label class="switch"><input type="checkbox" id="cfg-gas-lethal" checked><span class="slider"></span></label></div>
         <div class="cfg-label" style="margin-top:10px;">TEMPO SOPRAVVIVENZA SENZA MASCHERA (SEC):</div><input type="number" id="cfg-gas-time" class="input-box" style="width:100%; margin:0; padding:8px;" value="30">
         <div class="toggle-row" style="margin-top:10px; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px; max-width:70%;">MOSTRA NEMICI CHE TOSSISCONO NEL GAS</span><label class="switch"><input type="checkbox" id="cfg-gas-vis" checked><span class="slider"></span></label></div>
-        
         <div style="border-top:1px solid #f0f; margin-top:15px; padding-top:10px;">
             <div class="cfg-label" style="color:#fff;">CENTRO DELLA ZONA GAS:</div>
             <select id="cfg-gas-center" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;"><option value="FIELD">CENTRO DEL CAMPO</option></select>
-            <div class="cfg-label" style="margin-top:10px; color:#fff;">RAGGI FASI (Metri, separati da virgola):</div><input type="text" id="cfg-gas-radii" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="800, 400, 200, 50" placeholder="Es. 800, 400, 200, 50">
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">RAGGI FASI (Metri, sep. virgola):</div><input type="text" id="cfg-gas-radii" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="800, 400, 200, 50" placeholder="Es. 800, 400, 200, 50">
             <div class="cfg-label" style="margin-top:10px; color:#fff;">VELOCITÀ RESTRINGIMENTO (m/s):</div><input type="number" id="cfg-gas-speed" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="1" step="0.5">
-            <div class="cfg-label" style="margin-top:10px;">INTERVALLO DI ATTESA TRA FASI (Minuti):</div><input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
+            <div class="cfg-label" style="margin-top:10px;">INTERVALLO DI ATTESA (Minuti):</div><input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
         </div>
     </div>
 
@@ -159,7 +158,7 @@
     <div id="exfil-settings" class="cfg-box" style="display:flex;">
         <div class="cfg-label">NUMERO DI PUNTI ATTIVI:</div><input type="number" id="cfg-exfil-num" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="1" max="10">
         <div class="cfg-label">POSIZIONE ESTRAZIONI:</div><select id="cfg-exfil-pos" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;"><option value="defined">C: Punti Mappa Standard</option><option value="random">E: Punti Casuali (Sceglie Basi in area)</option></select>
-        <div class="cfg-label">TEMPO ARRIVO ELICOTTERO (MINUTI):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
+        <div class="cfg-label">TEMPO ARRIVO ELICOTTERO (MIN):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
     </div>
 
     <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA</button>
@@ -175,8 +174,11 @@
     const db = getDatabase(app);
 
     window.tacticalAlert = function(msg, title = "SYSTEM INFO", isGood = false) {
-        document.getElementById('tactical-alert-title').innerText = title; document.getElementById('tactical-alert-title').style.color = isGood ? "#0f0" : "#f00"; document.getElementById('tactical-alert-title').style.borderColor = isGood ? "#0f0" : "#f00";
-        document.getElementById('tactical-alert-box').style.borderColor = isGood ? "#0f0" : "#f00"; document.getElementById('tactical-alert-box').style.boxShadow = isGood ? "0 0 30px rgba(0,255,0,0.5)" : "0 0 30px rgba(255,0,0,0.5)";
+        document.getElementById('tactical-alert-title').innerText = title;
+        document.getElementById('tactical-alert-title').style.color = isGood ? "#0f0" : "#f00";
+        document.getElementById('tactical-alert-title').style.borderColor = isGood ? "#0f0" : "#f00";
+        document.getElementById('tactical-alert-box').style.borderColor = isGood ? "#0f0" : "#f00";
+        document.getElementById('tactical-alert-box').style.boxShadow = isGood ? "0 0 30px rgba(0,255,0,0.5)" : "0 0 30px rgba(255,0,0,0.5)";
         document.getElementById('tactical-alert-msg').innerText = msg;
         let btnColor = isGood ? "tactical-btn-ok" : "";
         document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn ${btnColor}" onclick="closeTacticalAlert()">OK</button>`;
@@ -184,37 +186,44 @@
     };
 
     window.tacticalConfirm = function(msg, onConfirmCallback) {
-        document.getElementById('tactical-alert-title').innerText = "RICHIESTA CONFERMA"; document.getElementById('tactical-alert-title').style.color = "#ff0"; document.getElementById('tactical-alert-title').style.borderColor = "#ff0";
-        document.getElementById('tactical-alert-box').style.borderColor = "#ff0"; document.getElementById('tactical-alert-box').style.boxShadow = "0 0 30px rgba(255,255,0,0.5)";
-        document.getElementById('tactical-alert-msg').innerText = msg; window.tempConfirmCallback = onConfirmCallback;
-        document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn tactical-btn-ok" onclick="closeTacticalAlert(); window.tempConfirmCallback();">CONFERMA</button><button class="tactical-btn" style="background:#222; border-color:#555;" onclick="closeTacticalAlert()">ANNULLA</button>`;
+        document.getElementById('tactical-alert-title').innerText = "RICHIESTA CONFERMA";
+        document.getElementById('tactical-alert-title').style.color = "#ff0";
+        document.getElementById('tactical-alert-title').style.borderColor = "#ff0";
+        document.getElementById('tactical-alert-box').style.borderColor = "#ff0";
+        document.getElementById('tactical-alert-box').style.boxShadow = "0 0 30px rgba(255,255,0,0.5)";
+        document.getElementById('tactical-alert-msg').innerText = msg;
+        window.tempConfirmCallback = onConfirmCallback;
+        document.getElementById('tactical-alert-btns').innerHTML = `
+            <button class="tactical-btn tactical-btn-ok" onclick="closeTacticalAlert(); window.tempConfirmCallback();">CONFERMA</button>
+            <button class="tactical-btn" style="background:#222; border-color:#555;" onclick="closeTacticalAlert()">ANNULLA</button>
+        `;
         document.getElementById('tactical-alert-overlay').style.display = 'flex';
     };
 
     window.closeTacticalAlert = function() { document.getElementById('tactical-alert-overlay').style.display = 'none'; };
 
-    // V4.0: BASI REALI INSERITE COME DA RICHIESTA. (La B8-B20 restano come placeholder fittizi in area).
+    // V4.2 BASI REALI DA FILE EXCEL CONVERTITE UTM -> DECIMAL
     const masterBasesDB = [
-        { id: "B1", name: "CHIRINGUITO", lat: 45.67905, lng: 9.89437 }, 
-        { id: "B2", name: "BANCA", lat: 45.67941, lng: 9.89544 }, 
-        { id: "B3", name: "PRATI BASSI", lat: 45.67913, lng: 9.89825 }, 
-        { id: "B4", name: "LABORATORIO", lat: 45.67904, lng: 9.89984 },
-        { id: "B5", name: "BUCO NERO", lat: 45.67908, lng: 9.89655 }, 
-        { id: "B6", name: "PRATI ALTI", lat: 45.68039, lng: 9.90002 }, 
-        { id: "B7", name: "ANFITEATRO", lat: 45.67921, lng: 9.90121 }, 
-        { id: "B8", name: "BASE 8", lat: 45.67940, lng: 9.89700 },
-        { id: "B9", name: "BASE 9", lat: 45.67960, lng: 9.89500 }, 
-        { id: "B10", name: "BASE 10", lat: 45.67910, lng: 9.89500 }, 
-        { id: "B11", name: "BASE 11", lat: 45.67890, lng: 9.89700 }, 
-        { id: "B12", name: "BASE 12", lat: 45.67870, lng: 9.89900 },
-        { id: "B13", name: "BASE 13", lat: 45.67850, lng: 9.90200 }, 
-        { id: "B14", name: "BASE 14", lat: 45.68000, lng: 9.90150 }, 
-        { id: "B15", name: "BASE 15", lat: 45.67970, lng: 9.89800 }, 
-        { id: "B16", name: "BASE 16", lat: 45.67950, lng: 9.89600 },
-        { id: "B17", name: "BASE 17", lat: 45.67930, lng: 9.89400 }, 
-        { id: "B18", name: "BASE 18", lat: 45.67910, lng: 9.89650 }, 
-        { id: "B19", name: "BASE 19", lat: 45.67920, lng: 9.89850 }, 
-        { id: "B20", name: "BASE 20", lat: 45.67900, lng: 9.90000 }
+        { id: "B1", name: "CHIRINGUITO", lat: 45.678518, lng: 9.894762 }, 
+        { id: "B2", name: "BANCA", lat: 45.678864, lng: 9.895844 }, 
+        { id: "B3", name: "PRATI BASSI", lat: 45.678572, lng: 9.898650 }, 
+        { id: "B4", name: "LABORATORIO", lat: 45.678470, lng: 9.900239 },
+        { id: "B5", name: "BUCO NERO", lat: 45.678524, lng: 9.896959 }, 
+        { id: "B6", name: "PRATI ALTI", lat: 45.679789, lng: 9.900445 }, 
+        { id: "B7", name: "ANFITEATRO", lat: 45.678631, lng: 9.901614 }, 
+        { id: "B8", name: "BASE 8", lat: 45.679400, lng: 9.897000 },
+        { id: "B9", name: "BASE 9", lat: 45.679600, lng: 9.895000 }, 
+        { id: "B10", name: "BASE 10", lat: 45.679100, lng: 9.895000 }, 
+        { id: "B11", name: "BASE 11", lat: 45.678900, lng: 9.897000 }, 
+        { id: "B12", name: "BASE 12", lat: 45.678700, lng: 9.899000 },
+        { id: "B13", name: "BASE 13", lat: 45.678500, lng: 9.902000 }, 
+        { id: "B14", name: "BASE 14", lat: 45.680000, lng: 9.901500 }, 
+        { id: "B15", name: "BASE 15", lat: 45.679700, lng: 9.898000 }, 
+        { id: "B16", name: "BASE 16", lat: 45.679500, lng: 9.896000 },
+        { id: "B17", name: "BASE 17", lat: 45.679300, lng: 9.894000 }, 
+        { id: "B18", name: "BASE 18", lat: 45.679100, lng: 9.896500 }, 
+        { id: "B19", name: "BASE 19", lat: 45.679200, lng: 9.898500 }, 
+        { id: "B20", name: "BASE 20", lat: 45.679000, lng: 9.900000 }
     ];
     
     const fieldsDB = {
@@ -372,7 +381,6 @@
             medic_config: { active: document.getElementById('cfg-medic-toggle').checked, bleedout_time: parseInt(document.getElementById('cfg-medic-bleedout').value) || 60, maxCures: parseInt(document.getElementById('cfg-medic-cures').value) || 2, maxRevives: parseInt(document.getElementById('cfg-medic-revives').value) || 1 }
         });
         
-        // V4.0: RESET EXFILS GLOBALI AL VIA
         set(ref(db, 'dmz_exfils'), null);
         set(ref(db, 'dmz_lockers'), null); set(ref(db, 'dmz_streaks'), null); set(ref(db, 'dmz_logs'), null); 
         tacticalAlert("PARTITA INIZIATA SU TUTTI I TERMINALI.", "SYSTEM ONLINE", true);
@@ -395,7 +403,7 @@
         let gasSelect = document.getElementById('cfg-gas-center');
         masterBasesDB.forEach(b => {
             let opt = document.createElement('option');
-            opt.value = b.id; opt.innerText = `BASE ${b.id.replace('B','')}`;
+            opt.value = b.id; opt.innerText = `BASE ${b.id.replace('B','')} - ${b.name}`;
             gasSelect.appendChild(opt);
         });
 
