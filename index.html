@@ -1,117 +1,422 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#330000"><title>DMZ: REGIA MASTER v4.1</title>
-<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-master.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DMZ Regia">
+<meta name="theme-color" content="#330000">
+<title>DMZ: REGIA MASTER v4.0</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-master.png">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-    body{margin:0;padding:0;background:#050000;font-family:'Share Tech Mono',monospace;color:#0f0;overflow-y:auto;}
-    .full-screen-ui{width:100%;min-height:100vh;background:radial-gradient(circle at center,#1a0505 0%,#000 100%);display:flex;flex-direction:column;align-items:center;padding:30px 0 60px 0;}
-    h1{color:#ff0;text-shadow:0 0 15px #ff0;font-size:32px;letter-spacing:4px;margin-bottom:5px;}
-    .status-label{font-size:18px;font-weight:bold;margin-bottom:20px;padding:10px;border:1px solid #f00;color:#f00;text-align:center;width:80%;max-width:300px;background:rgba(255,0,0,0.1);clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);}
-    .status-label.running{border-color:#0f0;color:#0f0;background:rgba(0,255,0,0.1);}
-    .input-box{background:rgba(20,0,0,0.8);border:1px solid #f00;color:#fff;padding:15px;margin:8px;width:80%;max-width:300px;text-align:center;font-size:16px;font-family:'Share Tech Mono',monospace;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);outline:none;}
-    .btn-deploy{background:linear-gradient(135deg,#440000 0%,#110000 100%);color:#fff;border:1px solid #f00;padding:15px;font-size:18px;font-family:'Share Tech Mono',monospace;cursor:pointer;margin-top:15px;width:80%;max-width:300px;clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);}
-    .toggle-row{display:flex;justify-content:space-between;align-items:center;background:rgba(20,0,0,0.5);padding:12px;border:1px solid #550000;margin-top:15px;width:80%;max-width:300px;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);}
-    .switch{position:relative;display:inline-block;width:50px;height:24px;} .switch input{opacity:0;width:0;height:0;} .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#333;transition:.4s;clip-path:polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px);} .slider:before{position:absolute;content:"";height:16px;width:16px;left:4px;bottom:4px;background-color:white;transition:.4s;} input:checked+.slider{background-color:#f00;} input:checked+.slider:before{transform:translateX(26px);background-color:#000;}
-    .cfg-box{background:rgba(10,0,0,0.8);border:1px solid #444;width:80%;max-width:300px;padding:15px;display:none;flex-direction:column;gap:10px;margin-top:-5px;}
-    .cfg-label{color:#aaa;font-size:11px;text-align:left;}
-    .cfg-input-edit{background:transparent;border:1px dashed #555;color:#fff;width:45px;text-align:center;font-family:monospace;}
-    #tactical-alert-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(5px);z-index:9999;display:none;justify-content:center;align-items:center;}
-    #tactical-alert-box{background:#0a0505;border:2px solid #f00;padding:25px;width:85%;max-width:320px;text-align:center;box-shadow:0 0 30px rgba(255,0,0,0.5);clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);}
-    .tactical-btn{background:#300;border:1px solid #f00;color:#fff;padding:10px 15px;font-family:'Share Tech Mono',monospace;cursor:pointer;flex:1;} .tactical-btn-ok{background:#030;border-color:#0f0;color:#0f0;}
+    body { margin: 0; padding: 0; background: #050000; font-family: 'Share Tech Mono', 'Courier New', monospace; color: #0f0; overflow-y: auto; }
+    .full-screen-ui { width:100%; min-height:100vh; background: radial-gradient(circle at center, #1a0505 0%, #000 100%); display: flex; flex-direction: column; align-items: center; padding: 30px 0 60px 0; }
+    h1 { color: #ff0; text-shadow: 0 0 15px #ff0, 0 0 5px #ff0; font-size: 32px; letter-spacing: 4px; margin-bottom: 5px; text-align: center; }
+    .version-tag { color: #f55; font-size: 14px; margin-bottom: 20px; font-weight: bold; letter-spacing: 2px; }
+    .status-label { font-size: 18px; font-weight: bold; margin-bottom: 20px; padding: 10px; border: 1px solid #f00; color: #f00; text-align: center; width: 80%; max-width: 300px; background: rgba(255,0,0,0.1); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+    .status-label.running { border-color: #0f0; color: #0f0; background: rgba(0,255,0,0.1); }
+    .input-box { background: rgba(20, 0, 0, 0.8); border: 1px solid #f00; color: #fff; padding: 15px; margin: 8px; width: 80%; max-width: 300px; text-align: center; font-size: 16px; font-family: 'Share Tech Mono', monospace; text-transform: uppercase; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); transition: 0.3s; outline: none; }
+    .input-box:focus { background: rgba(40, 0, 0, 0.9); box-shadow: 0 0 10px #f00; }
+    .btn-deploy { background: linear-gradient(135deg, #440000 0%, #110000 100%); color: #fff; border: 1px solid #f00; padding: 15px 40px; font-size: 18px; font-family: 'Share Tech Mono', monospace; cursor: pointer; margin-top: 15px; box-shadow: 0 0 10px rgba(255,0,0,0.2); transition: 0.2s; width: 80%; max-width: 300px; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); text-transform: uppercase; letter-spacing: 1px; }
+    .btn-deploy:active { background: #f00; color: #000; box-shadow: 0 0 20px #f00; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; background: rgba(20,0,0,0.5); padding: 12px; border: 1px solid #550000; margin-top: 15px; width: 80%; max-width: 300px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+    .switch { position: relative; display: inline-block; width: 50px; height: 24px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px); }
+    input:checked + .slider { background-color: #f00; }
+    input:checked + .slider:before { transform: translateX(26px); background-color: #000; }
+    .cfg-box { background: rgba(10,0,0,0.8); border: 1px solid #444; width: 80%; max-width: 300px; padding: 15px; display: none; flex-direction: column; gap: 10px; margin-top: -5px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%); }
+    .cfg-label { color: #aaa; font-size: 11px; text-align: left; }
+    .cfg-input-edit { background: transparent; border: 1px dashed #555; color: #fff; width: 45px; text-align: center; font-family: monospace; font-size: 12px; }
+    .cfg-input-edit:focus { border-color: #f00; outline: none; }
+    .cfg-checkbox-list label { color: #ddd; font-size: 13px; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; cursor: pointer; }
+    #tactical-alert-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; }
+    #tactical-alert-box { background: #0a0505; border: 2px solid #f00; padding: 25px; width: 85%; max-width: 320px; text-align: center; box-shadow: 0 0 30px rgba(255,0,0,0.5); clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); }
+    #tactical-alert-title { color: #f00; margin-top: 0; margin-bottom: 15px; font-size: 20px; letter-spacing: 2px; border-bottom: 1px solid #f00; padding-bottom: 5px; }
+    #tactical-alert-msg { color: #fff; font-size: 14px; margin-bottom: 25px; line-height: 1.5; white-space: pre-line; }
+    .tactical-btn { background: #300; border: 1px solid #f00; color: #fff; padding: 10px 15px; font-family: 'Share Tech Mono', monospace; cursor: pointer; transition: 0.2s; flex: 1; font-size: 14px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+    .tactical-btn:active { background: #f00; color: #000; }
+    .tactical-btn-ok { background: #030; border-color: #0f0; color: #0f0; }
 </style>
 </head>
 <body>
 
-<div id="tactical-alert-overlay"><div id="tactical-alert-box"><h3 id="tactical-alert-title" style="color:#f00;border-bottom:1px solid #f00;padding-bottom:5px;">SYSTEM</h3><div id="tactical-alert-msg" style="margin-bottom:20px;font-size:14px;white-space:pre-line;"></div><div id="tactical-alert-btns" style="display:flex;gap:10px;"></div></div></div>
+<div id="tactical-alert-overlay">
+    <div id="tactical-alert-box">
+        <h3 id="tactical-alert-title">SYSTEM MESSAGE</h3>
+        <div id="tactical-alert-msg">Message here</div>
+        <div id="tactical-alert-btns" style="display: flex; gap: 10px; justify-content: center;"></div>
+    </div>
+</div>
 
 <div id="master-screen" class="full-screen-ui">
-    <h1>DMZ REGIA</h1><div class="version-tag">MASTER CORE v4.1 STABILE</div>
-    <div id="status-label" class="status-label">CONNESSIONE...</div>
-
-    <div class="cfg-label" style="width:80%;max-width:300px;">PRESET DI GIOCO:</div>
-    <select id="config-slot" class="input-box" style="border-color:#ff5555;color:#ff5555;margin-top:5px;"><option value="BATTLE_ROYALE">BATTLE ROYALE</option><option value="MALLOPPO">MALLOPPO</option></select>
-    <div style="display:flex;width:80%;max-width:300px;gap:10px;margin-bottom:20px;"><button class="btn-deploy" style="padding:10px;font-size:12px;width:50%;" onclick="saveConfig()">💾 SALVA</button><button class="btn-deploy" style="padding:10px;font-size:12px;width:50%;border-color:#0cf;" onclick="loadConfig()">📂 CARICA</button></div>
-
-    <div class="cfg-label" style="width:80%;max-width:300px;">CAMPO OPERATIVO:</div>
-    <select id="m-field" class="input-box" style="border-color:#ff0;color:#ff0;"><option value="campo1">CAMPO 1: DMZ ORIGINALE</option></select>
-
-    <div class="cfg-label" style="width:80%;max-width:300px;margin-top:15px;color:#ff0;">TEMPO MAX PARTITA (MINUTI):</div>
-    <input type="number" id="cfg-game-time" class="input-box" style="border-color:#ff0;color:#ff0;margin-top:5px;" value="45">
-
-    <div class="toggle-row"><span style="color:#0cf;font-weight:bold;">ZAINO E LOOT 🎒</span><label class="switch"><input type="checkbox" id="cfg-backpack-toggle" checked onchange="toggleBackpackMenu()"><span class="slider"></span></label></div>
-    <div id="backpack-settings" class="cfg-box" style="display:flex;border-color:#0cf;">
-        <select id="cfg-start-mode" class="input-box" style="width:100%;margin:0;padding:8px;font-size:12px;" onchange="updateStartModeUI()"><option value="none">NESSUNO</option><option value="choice" selected>A SCELTA</option></select>
-        <div id="cfg-start-limit-box"><div class="cfg-label">OGGETTI MAX:</div><input type="number" id="cfg-start-limit" class="input-box" style="width:100%;margin:0;padding:8px;" value="2"></div>
-    </div>
-
-    <div class="toggle-row"><span style="color:#8f8;font-weight:bold;">ECONOMIA 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked><span class="slider"></span></label></div>
+    <h1>DMZ REGIA</h1>
+    <div class="version-tag">MASTER CORE v4.0 (EXFIL LOGIC)</div>
     
-    <div class="toggle-row"><span style="color:#e6b800;font-weight:bold;">ARMADIETTI (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider"></span></label></div>
-    <div id="locker-settings" class="cfg-box" style="display:flex;"><label style="color:#ffd700;font-size:13px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CON CHIAVE</label></div>
+    <div id="status-label" class="status-label">CONNESSIONE AL SATELLITE...</div>
 
-    <div class="toggle-row"><span style="color:#0ff;font-weight:bold;">RADAR UAV 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider"></span></label></div>
-    <div id="uav-settings" class="cfg-box" style="display:flex;"><select id="cfg-uav-mode" class="input-box" style="width:100%;margin:0;padding:8px;"><option value="none" selected>SPENTO</option><option value="always">SEMPRE ATTIVO</option><option value="periodic">PERIODICO</option></select></div>
-
-    <div class="toggle-row"><span style="color:#ffa500;font-weight:bold;">MEDICO 🏥</span><label class="switch"><input type="checkbox" id="cfg-medic-toggle" checked onchange="toggleMedicMenu()"><span class="slider"></span></label></div>
-    <div id="medic-settings" class="cfg-box" style="display:flex;"><div class="cfg-label">MAX RIANIMAZIONI:</div><input type="number" id="cfg-medic-revives" class="input-box" style="width:100%;margin:0;padding:8px;" value="1"></div>
-
-    <div class="toggle-row"><span style="color:#f0f;font-weight:bold;">GAS DINAMICO ☢️</span><label class="switch"><input type="checkbox" id="cfg-gas-toggle"><span class="slider"></span></label></div>
-
-    <div class="toggle-row"><span style="color:#e6e6fa;font-weight:bold;">CONTRATTI (B) 📜</span><label class="switch"><input type="checkbox" id="cfg-contracts-toggle" checked onchange="toggleContractsMenu()"><span class="slider"></span></label></div>
-    <div id="contracts-settings" class="cfg-box" style="display:flex;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> CHIAVI PER LE BASI</label></div>
-
-    <div class="toggle-row"><span style="color:#0ff;font-weight:bold;">ESFILTRAZIONE 🚁</span><label class="switch"><input type="checkbox" id="cfg-exfil-toggle" checked onchange="toggleExfilMenu()"><span class="slider"></span></label></div>
-    <div id="exfil-settings" class="cfg-box" style="display:flex;">
-        <div class="cfg-label">TEMPO ELICOTTERO (MIN):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%;margin:0;padding:8px;" value="2">
-        <select id="cfg-exfil-pos" class="input-box" style="width:100%;margin:0;padding:8px;"><option value="defined">Punti Fissi (C1)</option></select>
+    <div class="cfg-label" style="width:80%; max-width:300px; text-align:center; font-size:14px; color:#ff5555; margin-top:10px;">PRESET DI GIOCO:</div>
+    <select id="config-slot" class="input-box" style="border-color: #ff5555; color: #ff5555; margin-top:5px;">
+        <option value="BATTLE_ROYALE">BATTLE ROYALE</option>
+        <option value="MALLOPPO">MALLOPPO</option>
+        <option value="DOMINIO">DOMINIO</option>
+        <option value="COMPLETA">COMPLETA</option>
+    </select>
+    <div style="display:flex; width:80%; max-width:300px; gap:10px; margin-bottom:30px;">
+        <button class="btn-deploy" style="padding:10px; font-size:12px; margin:0; width:50%; background:#400;" onclick="saveConfig()">💾 SALVA</button>
+        <button class="btn-deploy" style="padding:10px; font-size:12px; margin:0; width:50%; background:#004; border-color:#0cf;" onclick="loadConfig()">📂 CARICA</button>
     </div>
 
-    <button class="btn-deploy" style="background:linear-gradient(135deg,#008800 0%,#003300 100%);border-color:#0f0;margin-top:40px;" onclick="masterStartGame()">🚀 AVVIA PARTITA</button>
-    <button class="btn-deploy" style="background:rgba(255,0,0,0.2);border-color:#f00;margin-top:20px;margin-bottom:50px;" onclick="masterStopGame()">⏹ TERMINA PARTITA</button>
+    <div class="cfg-label" style="width:80%; max-width:300px;">CAMPO OPERATIVO:</div>
+    <select id="m-field" class="input-box" style="border-color: #ff0; color: #ff0;">
+        <option value="campo1">CAMPO 1: DMZ ORIGINALE</option>
+        <option value="campo2">CAMPO 2: ZONA URBANA</option>
+        <option value="campo5">CAMPO 5: TEST LOCALE</option>
+    </select>
+
+    <div class="cfg-label" style="width:80%; max-width:300px; margin-top:15px; color:#ff0;">TEMPO MAX PARTITA (MINUTI):</div>
+    <input type="number" id="cfg-game-time" class="input-box" style="border-color: #ff0; color: #ff0; margin-top:5px;" value="45">
+
+    <div class="toggle-row"><span style="color:#0cf; font-weight:bold;">SISTEMA ZAINO E LOOT 🎒</span><label class="switch"><input type="checkbox" id="cfg-backpack-toggle" checked onchange="toggleBackpackMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div id="backpack-settings" class="cfg-box" style="display:flex; border-color:#0cf;">
+        <div class="cfg-label" style="color:#0cf;">FORNITURA INIZIALE / BONUS:</div>
+        <select id="cfg-start-mode" class="input-box" style="width:100%; margin:0; padding:8px; font-size:12px; border-color:#0cf; color:#0cf;" onchange="updateStartModeUI()"><option value="none">NESSUNO</option><option value="fixed">FISSO</option><option value="choice" selected>A SCELTA</option></select>
+        <div id="cfg-start-limit-box" style="display:block; margin-top:10px;"><div class="cfg-label">OGGETTI MASSIMI SELEZIONABILI:</div><input type="number" id="cfg-start-limit" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0cf;" value="2" min="1" max="5"></div>
+        <div style="display:flex; gap:5px; margin-bottom:5px; margin-top:10px;"><input type="text" id="start-name" class="input-box" style="width:60%; margin:0; padding:5px; font-size:10px;" placeholder="OGGETTO"><input type="number" id="start-value" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="VALORE $"></div>
+        <button class="btn-deploy" style="background:#033; border-color:#0cf; font-size:12px; padding:8px; margin:0;" onclick="addStartGearItem()">+ AGGIUNGI IN LISTA</button>
+        <div id="start-gear-list" style="margin-top:10px; border-top:1px solid #444; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+    </div>
+
+    <div class="toggle-row"><span style="color:#8f8; font-weight:bold;">SISTEMA ECONOMICO 💵</span><label class="switch"><input type="checkbox" id="cfg-eco-toggle" checked onchange="toggleEcoMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div id="eco-settings" class="cfg-box" style="display:flex; border-color:#8f8;">
+        <div class="cfg-label" style="color:#8f8;">LISTINO PREZZI NEGOZIO:</div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="shop-name" class="input-box" style="width:60%; margin:0; padding:5px; font-size:10px;" placeholder="OGGETTO"><input type="number" id="shop-price" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="PREZZO $"></div>
+        <button class="btn-deploy" style="background:#030; border-color:#8f8; font-size:12px; padding:8px; margin:0;" onclick="addShopItem()">+ AGGIUNGI IN VENDITA</button>
+        <div id="shop-list" style="margin-top:10px; border-top:1px solid #444; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+    </div>
+
+    <div class="toggle-row"><span style="color:#e6b800; font-weight:bold;">ARMADIETTI SUL CAMPO (A) 📦</span><label class="switch"><input type="checkbox" id="cfg-lockers-toggle" checked onchange="toggleLockerMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div id="locker-settings" class="cfg-box" style="display:flex;">
+        <label style="color:#ffd700; font-size:13px; margin-bottom:10px; border-bottom:1px solid #444; padding-bottom:10px;"><input type="checkbox" id="cfg-keys-lockers" checked> ARMADIETTI CHIUSI A CHIAVE (Loot Raro)</label>
+        <div id="eco-money-settings" style="margin-bottom:10px;">
+            <div class="cfg-label" style="color:#8f8; font-weight:bold;">PROBABILITÀ DENARO:</div>
+            <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="number" id="money-amount" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px; color:#8f8; border-color:#8f8;" placeholder="IMPORTO $"><input type="number" id="money-chance" class="input-box" style="width:50%; margin:0; padding:5px; font-size:10px;" placeholder="% CHANCE"></div>
+            <button class="btn-deploy" style="background:#030; border-color:#0f0; font-size:12px; padding:8px; margin:0;" onclick="addMoneyItem()">+ AGGIUNGI PACCHETTO DENARO</button>
+            <div id="money-list" style="margin-top:10px; border-top:1px dashed #8f8; padding-top:10px; max-height:100px; overflow-y:auto;"></div>
+        </div>
+        <div id="bp-loot-settings" style="margin-top:10px; border-top:1px solid #444; padding-top:10px;">
+            <div class="cfg-label" style="color:#e6b800; font-weight:bold;">PROBABILITÀ OGGETTI:</div>
+            <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="loot-name" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px;" placeholder="NOME OGGETTO"><input type="number" id="loot-chance" class="input-box" style="width:25%; margin:0; padding:5px; font-size:10px;" placeholder="%"><input type="number" id="loot-value" class="input-box" style="width:35%; margin:0; padding:5px; font-size:10px; border-color:#8f8; color:#8f8;" placeholder="VALORE $"></div>
+            <button class="btn-deploy" style="background:#330; border-color:#ff0; font-size:12px; padding:8px; margin:0;" onclick="addLootItem()">+ AGGIUNGI OGGETTO</button>
+            <div id="loot-list" style="margin-top:10px; border-top:1px dashed #ff0; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+        </div>
+    </div>
+    
+    <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">SISTEMA RADAR (UAV) 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
+    <div id="uav-settings" class="cfg-box" style="display:flex; border-color:#0ff;">
+        <div class="cfg-label">MODALITÀ RADAR GLOBALE:</div>
+        <select id="cfg-uav-mode" class="input-box" style="width:100%; margin:0; padding:8px; font-size:12px; border-color:#0ff; color:#0ff;" onchange="updateUavModeUI()"><option value="none" selected>SPENTO (Solo tramite oggetti UAV)</option><option value="always">SEMPRE ATTIVO (Tutti vedono tutti)</option><option value="periodic">PERIODICO (Si accende e spegne)</option></select>
+        <div id="uav-periodic-box" style="display:none; margin-top:10px; border-top:1px dashed #0ff; padding-top:10px;"><div class="cfg-label">DURATA ACCENSIONE (Secondi):</div><input type="number" id="cfg-uav-on" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0ff; color:#fff;" value="30"><div class="cfg-label" style="margin-top:10px;">DURATA SPEGNIMENTO (Secondi):</div><input type="number" id="cfg-uav-off" class="input-box" style="width:100%; margin:0; padding:8px; border-color:#0ff; color:#fff;" value="120"></div>
+    </div>
+
+    <div class="toggle-row"><span style="color:#ffa500; font-weight:bold;">SISTEMA MEDICO 🏥</span><label class="switch"><input type="checkbox" id="cfg-medic-toggle" checked onchange="toggleMedicMenu()"><span class="slider"></span></label></div>
+    <div id="medic-settings" class="cfg-box" style="display:flex;">
+        <div class="cfg-label" style="color:#ffa500; font-weight:bold;">MAX GIOCATORI PER SQUADRA:</div><input type="number" id="cfg-team-size" class="input-box" style="width:100%; margin:0; padding:8px;" value="4">
+        <div class="cfg-label" style="margin-top:10px;">TEMPO DISSANGUAMENTO (SECONDI):</div><input type="number" id="cfg-medic-bleedout" class="input-box" style="width:100%; margin:0; padding:8px;" value="60">
+        <div class="cfg-label" style="margin-top:10px;">MAX CURE CONSENTITE (DA FERITO):</div><input type="number" id="cfg-medic-cures" class="input-box" style="width:100%; margin:0; padding:8px;" value="2">
+        <div class="cfg-label">MAX RIANIMAZIONI (DA MORTO/ASSIMILAZIONE):</div><input type="number" id="cfg-medic-revives" class="input-box" style="width:100%; margin:0; padding:8px;" value="1">
+    </div>
+
+    <div class="toggle-row"><span style="color:#f0f; font-weight:bold;">ZONA GAS DINAMICA ☢️</span><label class="switch"><input type="checkbox" id="cfg-gas-toggle" onchange="toggleGasMenu()"><span class="slider"></span></label></div>
+    <div id="gas-settings" class="cfg-box" style="border-color:#f0f;">
+        <div class="toggle-row" style="margin-top:0; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px;">GAS LETALE</span><label class="switch"><input type="checkbox" id="cfg-gas-lethal" checked><span class="slider"></span></label></div>
+        <div class="cfg-label" style="margin-top:10px;">TEMPO SOPRAVVIVENZA SENZA MASCHERA (SEC):</div><input type="number" id="cfg-gas-time" class="input-box" style="width:100%; margin:0; padding:8px;" value="30">
+        <div class="toggle-row" style="margin-top:10px; border:none; padding:0; width:100%;"><span style="color:#f0f; font-size:12px; max-width:70%;">MOSTRA NEMICI CHE TOSSISCONO NEL GAS</span><label class="switch"><input type="checkbox" id="cfg-gas-vis" checked><span class="slider"></span></label></div>
+        
+        <div style="border-top:1px solid #f0f; margin-top:15px; padding-top:10px;">
+            <div class="cfg-label" style="color:#fff;">CENTRO DELLA ZONA GAS:</div>
+            <select id="cfg-gas-center" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;"><option value="FIELD">CENTRO DEL CAMPO</option></select>
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">RAGGI FASI (Metri, separati da virgola):</div><input type="text" id="cfg-gas-radii" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="800, 400, 200, 50" placeholder="Es. 800, 400, 200, 50">
+            <div class="cfg-label" style="margin-top:10px; color:#fff;">VELOCITÀ RESTRINGIMENTO (m/s):</div><input type="number" id="cfg-gas-speed" class="input-box" style="width:100%; margin:0; padding:8px; color:#fff; border-color:#f0f;" value="1" step="0.5">
+            <div class="cfg-label" style="margin-top:10px;">INTERVALLO DI ATTESA TRA FASI (Minuti):</div><input type="number" id="cfg-gas-interval" class="input-box" style="width:100%; margin:0; padding:8px;" value="10">
+        </div>
+    </div>
+
+    <div class="toggle-row"><span style="color:#e6e6fa; font-weight:bold;">CONTRATTI E BASI (B) 📜</span><label class="switch"><input type="checkbox" id="cfg-contracts-toggle" checked onchange="toggleContractsMenu()"><span class="slider"></span></label></div>
+    <div id="contracts-settings" class="cfg-box cfg-checkbox-list" style="display:flex;">
+        <label><input type="checkbox" class="contract-cb" value="INTEL" checked> RECUPERO DATI SEGRETI</label>
+        <label><input type="checkbox" class="contract-cb" value="DESTROY" checked> DISTRUZIONE SCORTE</label>
+        <label><input type="checkbox" class="contract-cb" value="CARGO" checked> CONSEGNA MATERIALE (DROP)</label>
+        <label><input type="checkbox" class="contract-cb" value="HUNT" checked> CACCIA ALLA SQUADRA (PvP)</label>
+        <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER LE BASI</label></div>
+    </div>
+
+    <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">ESFILTRAZIONE (E/C) 🚁</span><label class="switch"><input type="checkbox" id="cfg-exfil-toggle" checked onchange="toggleExfilMenu()"><span class="slider"></span></label></div>
+    <div id="exfil-settings" class="cfg-box" style="display:flex;">
+        <div class="cfg-label">NUMERO DI PUNTI ATTIVI:</div><input type="number" id="cfg-exfil-num" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="1" max="10">
+        <div class="cfg-label">POSIZIONE ESTRAZIONI:</div><select id="cfg-exfil-pos" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;"><option value="defined">C: Punti Mappa Standard</option><option value="random">E: Punti Casuali (Sceglie Basi in area)</option></select>
+        <div class="cfg-label">TEMPO ARRIVO ELICOTTERO (MINUTI):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
+    </div>
+
+    <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA</button>
+    <button class="btn-deploy" style="background:rgba(255,0,0,0.2); border-color:#f00; margin-top:20px; margin-bottom:50px;" onclick="masterStopGame()">⏹ TERMINA PARTITA E RESETTA</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getDatabase, ref, update, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
-    const app = initializeApp({ apiKey: "AIzaSyCggNlC5bOdGVBzUsfX8wO4ygkNzNcFFm0", authDomain: "softair-dmz.firebaseapp.com", databaseURL: "https://softair-dmz-default-rtdb.firebaseio.com", projectId: "softair-dmz" });
+
+    const firebaseConfig = { apiKey: "AIzaSyCggNlC5bOdGVBzUsfX8wO4ygkNzNcFFm0", authDomain: "softair-dmz.firebaseapp.com", databaseURL: "https://softair-dmz-default-rtdb.firebaseio.com", projectId: "softair-dmz" };
+    const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.tacticalAlert = function(msg, title = "INFO") { document.getElementById('tactical-alert-title').innerText = title; document.getElementById('tactical-alert-msg').innerText = msg; document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn tactical-btn-ok" onclick="document.getElementById('tactical-alert-overlay').style.display='none'">OK</button>`; document.getElementById('tactical-alert-overlay').style.display = 'flex'; };
-    window.tacticalConfirm = function(msg, cb) { document.getElementById('tactical-alert-title').innerText = "CONFERMA"; document.getElementById('tactical-alert-msg').innerText = msg; window.tmpCb = cb; document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn tactical-btn-ok" onclick="document.getElementById('tactical-alert-overlay').style.display='none';window.tmpCb();">SI</button><button class="tactical-btn" onclick="document.getElementById('tactical-alert-overlay').style.display='none'">NO</button>`; document.getElementById('tactical-alert-overlay').style.display = 'flex'; };
+    window.tacticalAlert = function(msg, title = "SYSTEM INFO", isGood = false) {
+        document.getElementById('tactical-alert-title').innerText = title; document.getElementById('tactical-alert-title').style.color = isGood ? "#0f0" : "#f00"; document.getElementById('tactical-alert-title').style.borderColor = isGood ? "#0f0" : "#f00";
+        document.getElementById('tactical-alert-box').style.borderColor = isGood ? "#0f0" : "#f00"; document.getElementById('tactical-alert-box').style.boxShadow = isGood ? "0 0 30px rgba(0,255,0,0.5)" : "0 0 30px rgba(255,0,0,0.5)";
+        document.getElementById('tactical-alert-msg').innerText = msg;
+        let btnColor = isGood ? "tactical-btn-ok" : "";
+        document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn ${btnColor}" onclick="closeTacticalAlert()">OK</button>`;
+        document.getElementById('tactical-alert-overlay').style.display = 'flex';
+    };
 
-    window.toggleBackpackMenu=()=>document.getElementById('backpack-settings').style.display=document.getElementById('cfg-backpack-toggle').checked?'flex':'none';
-    window.toggleLockerMenu=()=>document.getElementById('locker-settings').style.display=document.getElementById('cfg-lockers-toggle').checked?'flex':'none';
-    window.toggleUavMenu=()=>document.getElementById('uav-settings').style.display=document.getElementById('cfg-uav-toggle').checked?'flex':'none';
-    window.toggleMedicMenu=()=>document.getElementById('medic-settings').style.display=document.getElementById('cfg-medic-toggle').checked?'flex':'none';
-    window.toggleContractsMenu=()=>document.getElementById('contracts-settings').style.display=document.getElementById('cfg-contracts-toggle').checked?'flex':'none';
-    window.toggleExfilMenu=()=>document.getElementById('exfil-settings').style.display=document.getElementById('cfg-exfil-toggle').checked?'flex':'none';
-    window.updateStartModeUI=()=>document.getElementById('cfg-start-limit-box').style.display=(document.getElementById('cfg-start-mode').value==='choice')?'block':'none';
+    window.tacticalConfirm = function(msg, onConfirmCallback) {
+        document.getElementById('tactical-alert-title').innerText = "RICHIESTA CONFERMA"; document.getElementById('tactical-alert-title').style.color = "#ff0"; document.getElementById('tactical-alert-title').style.borderColor = "#ff0";
+        document.getElementById('tactical-alert-box').style.borderColor = "#ff0"; document.getElementById('tactical-alert-box').style.boxShadow = "0 0 30px rgba(255,255,0,0.5)";
+        document.getElementById('tactical-alert-msg').innerText = msg; window.tempConfirmCallback = onConfirmCallback;
+        document.getElementById('tactical-alert-btns').innerHTML = `<button class="tactical-btn tactical-btn-ok" onclick="closeTacticalAlert(); window.tempConfirmCallback();">CONFERMA</button><button class="tactical-btn" style="background:#222; border-color:#555;" onclick="closeTacticalAlert()">ANNULLA</button>`;
+        document.getElementById('tactical-alert-overlay').style.display = 'flex';
+    };
 
-    window.masterStartGame = function() {
-        let maxGameMinutes = parseInt(document.getElementById('cfg-game-time').value) || 45;
-        let waitM = parseInt(document.getElementById('cfg-exfil-wait').value) || 2;
-        update(ref(db, 'dmz_settings'), {
-            status: 'running', activeField: document.getElementById('m-field').value, gameEndTime: Date.now() + (maxGameMinutes * 60000),
-            backpack_active: document.getElementById('cfg-backpack-toggle').checked, economy_active: document.getElementById('cfg-eco-toggle').checked,
-            lockers_active: document.getElementById('cfg-lockers-toggle').checked, keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
-            exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, waitTime: waitM, position: document.getElementById('cfg-exfil-pos').value, points: [ { id: "C1", lat: 45.6800, lng: 9.8966, label: "EXFIL C1" } ] }
-        }).then(() => {
-            set(ref(db, 'dmz_exfils'), null); set(ref(db, 'dmz_lockers'), null); set(ref(db, 'dmz_streaks'), null); set(ref(db, 'dmz_logs'), null);
-            tacticalAlert("PARTITA INIZIATA SUI TERMINALI.", "ONLINE");
-        });
+    window.closeTacticalAlert = function() { document.getElementById('tactical-alert-overlay').style.display = 'none'; };
+
+    // V4.0: BASI REALI INSERITE COME DA RICHIESTA. (La B8-B20 restano come placeholder fittizi in area).
+    const masterBasesDB = [
+        { id: "B1", name: "CHIRINGUITO", lat: 45.67905, lng: 9.89437 }, 
+        { id: "B2", name: "BANCA", lat: 45.67941, lng: 9.89544 }, 
+        { id: "B3", name: "PRATI BASSI", lat: 45.67913, lng: 9.89825 }, 
+        { id: "B4", name: "LABORATORIO", lat: 45.67904, lng: 9.89984 },
+        { id: "B5", name: "BUCO NERO", lat: 45.67908, lng: 9.89655 }, 
+        { id: "B6", name: "PRATI ALTI", lat: 45.68039, lng: 9.90002 }, 
+        { id: "B7", name: "ANFITEATRO", lat: 45.67921, lng: 9.90121 }, 
+        { id: "B8", name: "BASE 8", lat: 45.67940, lng: 9.89700 },
+        { id: "B9", name: "BASE 9", lat: 45.67960, lng: 9.89500 }, 
+        { id: "B10", name: "BASE 10", lat: 45.67910, lng: 9.89500 }, 
+        { id: "B11", name: "BASE 11", lat: 45.67890, lng: 9.89700 }, 
+        { id: "B12", name: "BASE 12", lat: 45.67870, lng: 9.89900 },
+        { id: "B13", name: "BASE 13", lat: 45.67850, lng: 9.90200 }, 
+        { id: "B14", name: "BASE 14", lat: 45.68000, lng: 9.90150 }, 
+        { id: "B15", name: "BASE 15", lat: 45.67970, lng: 9.89800 }, 
+        { id: "B16", name: "BASE 16", lat: 45.67950, lng: 9.89600 },
+        { id: "B17", name: "BASE 17", lat: 45.67930, lng: 9.89400 }, 
+        { id: "B18", name: "BASE 18", lat: 45.67910, lng: 9.89650 }, 
+        { id: "B19", name: "BASE 19", lat: 45.67920, lng: 9.89850 }, 
+        { id: "B20", name: "BASE 20", lat: 45.67900, lng: 9.90000 }
+    ];
+    
+    const fieldsDB = {
+        "campo1": { boundaries: [ [45.679223, 9.892754], [45.679053, 9.894369], [45.678634, 9.896859], [45.678212, 9.903234], [45.680357, 9.902110], [45.679790, 9.899845], [45.679941, 9.897482], [45.679488, 9.894333] ], exfils: [ { id: "C1", lat: 45.6800, lng: 9.8966, label: "EXFIL C1" } ] },
+        "campo2": { boundaries: [[45.001, 8.999], [45.001, 9.001], [44.999, 9.001], [44.999, 8.999]], exfils: [] },
+        "campo5": { boundaries: [[45.7014, 9.8256], [45.7014, 9.8296], [45.6974, 9.8296], [45.6974, 9.8256]], exfils: [ { id: "C1", lat: 45.6998, lng: 9.8276, label: "EXFIL C1" } ] }
+    };
+    function isInsideArea(p, poly) { let x = p[0], y = p[1], inside = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { let intersect = ((poly[i][1] > y) != (poly[j][1] > y)) && (x < (poly[j][0] - poly[i][0]) * (y - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0]); if (intersect) inside = !inside; } return inside; }
+
+    let masterStartPool = [ { name: "Benda Medica", value: 0, enabled: true }, { name: "MASCHERA GAS SEMPLICE", value: 500, enabled: true }, { name: "Kit Medico", value: 1500, enabled: false }, { name: "CHIAVE UNIVERSALE", value: 5000, enabled: false } ];
+    let masterMoneyPool = [{ amount: 0, chance: 40, enabled: true }, { amount: 500, chance: 35, enabled: true }, { amount: 2500, chance: 25, enabled: true }];
+    let masterLootPool = [ { name: "VUOTO", chance: 35, value: 0, enabled: true }, { name: "CHIAVE UNIVERSALE", chance: 2, value: 5000, enabled: true }, { name: "MASCHERA GAS SEMPLICE", chance: 15, value: 500, enabled: true }, { name: "Hard Disk Segreto", chance: 10, value: 2500, enabled: true }, { name: "Benda Medica", chance: 20, value: 0, enabled: true }, { name: "ATTACCO AEREO", chance: 8, value: 4000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", chance: 5, value: 5000, enabled: true }, { name: "UAV DI DISTURBO", chance: 5, value: 2500, enabled: true } ];
+    let masterShopPool = [ { name: "CHIAVE UNIVERSALE", price: 10000, enabled: true }, { name: "MASCHERA GAS COMPLETA", price: 3000, enabled: true }, { name: "Terminale UAV", price: 4000, enabled: true }, { name: "Kit Medico", price: 1500, enabled: true }, { name: "ATTACCO AEREO", price: 8000, enabled: true }, { name: "IMPULSO EMP", price: 12000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", price: 10000, enabled: true } ];
+
+    window.updateStartModeUI = function() { document.getElementById('cfg-start-limit-box').style.display = (document.getElementById('cfg-start-mode').value === 'choice') ? 'block' : 'none'; };
+    window.toggleGasMenu = function() { document.getElementById('gas-settings').style.display = document.getElementById('cfg-gas-toggle').checked ? 'block' : 'none'; };
+    window.toggleExfilMenu = function() { document.getElementById('exfil-settings').style.display = document.getElementById('cfg-exfil-toggle').checked ? 'flex' : 'none'; };
+    window.toggleLockerMenu = function() { document.getElementById('locker-settings').style.display = document.getElementById('cfg-lockers-toggle').checked ? 'flex' : 'none'; };
+    window.toggleShopMenu = function() { document.getElementById('shop-settings').style.display = document.getElementById('cfg-shops-toggle').checked ? 'flex' : 'none'; };
+    window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
+    window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
+    window.toggleUavMenu = function() { document.getElementById('uav-settings').style.display = document.getElementById('cfg-uav-toggle').checked ? 'flex' : 'none'; };
+    window.updateUavModeUI = function() { document.getElementById('uav-periodic-box').style.display = (document.getElementById('cfg-uav-mode').value === 'periodic') ? 'block' : 'none'; };
+    window.toggleBackpackMenu = function() { let on = document.getElementById('cfg-backpack-toggle').checked; document.getElementById('backpack-settings').style.display = on ? 'flex' : 'none'; let bls = document.getElementById('bp-loot-settings'); if(bls) bls.style.display = on ? 'block' : 'none'; };
+    window.toggleEcoMenu = function() { let on = document.getElementById('cfg-eco-toggle').checked; document.getElementById('eco-settings').style.display = on ? 'flex' : 'none'; let ems = document.getElementById('eco-money-settings'); if(ems) ems.style.display = on ? 'block' : 'none'; };
+
+    window.updateMoneyItem = function(idx, field, val) { masterMoneyPool[idx][field] = parseInt(val) || 0; };
+    window.updateLootItem = function(idx, field, val) { masterLootPool[idx][field] = parseInt(val) || 0; };
+    window.updateShopItem = function(idx, field, val) { masterShopPool[idx][field] = parseInt(val) || 0; };
+
+    window.renderStartGearList = function() { const list = document.getElementById('start-gear-list'); list.innerHTML = ""; masterStartPool.forEach((i, idx) => { let valStr = i.value > 0 ? `<span style="color:#8f8;">$${i.value}</span>` : `<span style="color:#aaa;">Consum.</span>`; let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0cf; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleStartGearItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} - ${valStr}</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeStartGearItem(${idx})">X</span></div>`; });  };
+    window.toggleStartGearItem = function(idx) { masterStartPool[idx].enabled = !masterStartPool[idx].enabled; window.renderStartGearList(); };
+    window.addStartGearItem = function() { let n=document.getElementById('start-name').value.toUpperCase(), v=parseInt(document.getElementById('start-value').value)||0; if(n){ masterStartPool.push({name:n, value:v, enabled: true}); document.getElementById('start-name').value=''; document.getElementById('start-value').value=''; window.renderStartGearList(); } };
+    window.removeStartGearItem = function(idx) { masterStartPool.splice(idx, 1); window.renderStartGearList(); };
+
+    window.renderMoneyList = function() { const list = document.getElementById('money-list'); list.innerHTML = ""; masterMoneyPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#8f8; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleMoneyItem(${idx})" style="transform:scale(1.2);"><span>$<input type="number" class="cfg-input-edit" style="color:#8f8; border-color:#8f8;" value="${i.amount}" onchange="updateMoneyItem(${idx}, 'amount', this.value)"> (<input type="number" class="cfg-input-edit" value="${i.chance}" onchange="updateMoneyItem(${idx}, 'chance', this.value)">%)</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeMoneyItem(${idx})">X</span></div>`; }); };
+    window.toggleMoneyItem = function(idx) { masterMoneyPool[idx].enabled = !masterMoneyPool[idx].enabled; window.renderMoneyList(); };
+    window.addMoneyItem = function() { let a=parseInt(document.getElementById('money-amount').value)||0, c=parseInt(document.getElementById('money-chance').value); if(c>0){ masterMoneyPool.push({amount:a, chance:c, enabled: true}); window.renderMoneyList(); } };
+    window.removeMoneyItem = function(idx) { masterMoneyPool.splice(idx, 1); window.renderMoneyList(); };
+
+    window.renderLootList = function() { const list = document.getElementById('loot-list'); list.innerHTML = ""; masterLootPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#e6b800; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleLootItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} (<input type="number" class="cfg-input-edit" value="${i.chance}" onchange="updateLootItem(${idx}, 'chance', this.value)">%) [$<input type="number" class="cfg-input-edit" style="color:#e6b800; border-color:#e6b800;" value="${i.value}" onchange="updateLootItem(${idx}, 'value', this.value)">]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeLootItem(${idx})">X</span></div>`; }); };
+    window.toggleLootItem = function(idx) { masterLootPool[idx].enabled = !masterLootPool[idx].enabled; window.renderLootList(); };
+    window.addLootItem = function() { let n=document.getElementById('loot-name').value.toUpperCase(), c=parseInt(document.getElementById('loot-chance').value), v=parseInt(document.getElementById('loot-value').value)||0; if(n&&c>0){ masterLootPool.push({name:n, chance:c, value:v, enabled: true}); window.renderLootList(); } };
+    window.removeLootItem = function(idx) { masterLootPool.splice(idx, 1); window.renderLootList(); };
+
+    window.renderShopList = function() { const list = document.getElementById('shop-list'); list.innerHTML = ""; masterShopPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0aa; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleShopItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} [$<input type="number" class="cfg-input-edit" style="color:#0aa; border-color:#0aa;" value="${i.price}" onchange="updateShopItem(${idx}, 'price', this.value)">]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeShopItem(${idx})">X</span></div>`; }); };
+    window.toggleShopItem = function(idx) { masterShopPool[idx].enabled = !masterShopPool[idx].enabled; window.renderShopList(); };
+    window.addShopItem = function() { let n=document.getElementById('shop-name').value.toUpperCase(), p=parseInt(document.getElementById('shop-price').value); if(n&&p>0){ masterShopPool.push({name:n, price:p, enabled:true}); window.renderShopList(); } };
+    window.removeShopItem = function(idx) { masterShopPool.splice(idx, 1); window.renderShopList(); };
+
+    let getVal = (id, def) => { let el = document.getElementById(id); return el ? (parseInt(el.value) || def) : def; };
+    let getChk = (id, def) => { let el = document.getElementById(id); return el ? el.checked : def; };
+    let getStr = (id, def) => { let el = document.getElementById(id); return el ? el.value : def; };
+
+    window.saveConfig = function() {
+        let slot = document.getElementById('config-slot').value;
+        let conf = { 
+            loot: masterLootPool, money: masterMoneyPool, shop: masterShopPool, startPool: masterStartPool,
+            teamSize: getVal('cfg-team-size', 4), bleedout: getVal('cfg-medic-bleedout', 60), cures: getVal('cfg-medic-cures', 2), revives: getVal('cfg-medic-revives', 1),
+            medicActive: getChk('cfg-medic-toggle', true), contractsActive: getChk('cfg-contracts-toggle', true), 
+            keysBases: getChk('cfg-keys-bases', false), keysLockers: getChk('cfg-keys-lockers', true),
+            backpackActive: getChk('cfg-backpack-toggle', true), ecoActive: getChk('cfg-eco-toggle', true), lockersActive: getChk('cfg-lockers-toggle', true),
+            gameTime: getVal('cfg-game-time', 45),
+            gasActive: getChk('cfg-gas-toggle', false), gasLethal: getChk('cfg-gas-lethal', true), gasTime: getVal('cfg-gas-time', 30), gasSteps: getVal('cfg-gas-steps', 3), gasInterval: getVal('cfg-gas-interval', 10),
+            gasCenter: getStr('cfg-gas-center', 'FIELD'), gasRadii: getStr('cfg-gas-radii', '800, 400, 200, 50'), gasSpeed: parseFloat(getVal('cfg-gas-speed', 1)),
+            startMode: getStr('cfg-start-mode', 'choice'), startLimit: getVal('cfg-start-limit', 2),
+            uavActive: getChk('cfg-uav-toggle', true), uavMode: getStr('cfg-uav-mode', 'none'), uavOn: getVal('cfg-uav-on', 30), uavOff: getVal('cfg-uav-off', 120)
+        };
+        localStorage.setItem('dmz_config_master_' + slot, JSON.stringify(conf));
+        tacticalAlert("Configurazione '" + slot + "' salvata sulla Regia!", "SALVATAGGIO", true);
     };
     
-    window.masterStopGame = function() { tacticalConfirm("Terminare la Partita per tutti?", () => { update(ref(db, 'dmz_settings'), { status: 'lobby' }); set(ref(db, 'dmz_players'), null); }); };
+    window.loadConfig = function() {
+        let slot = document.getElementById('config-slot').value;
+        let data = localStorage.getItem('dmz_config_master_' + slot);
+        if(data) {
+            let conf = JSON.parse(data); 
+            masterLootPool = conf.loot || masterLootPool; masterMoneyPool = conf.money || masterMoneyPool; masterShopPool = conf.shop || masterShopPool; masterStartPool = conf.startPool || masterStartPool;
+            
+            if(conf.teamSize) document.getElementById('cfg-team-size').value = conf.teamSize;
+            if(conf.bleedout) document.getElementById('cfg-medic-bleedout').value = conf.bleedout;
+            if(conf.cures) document.getElementById('cfg-medic-cures').value = conf.cures;
+            if(conf.revives) document.getElementById('cfg-medic-revives').value = conf.revives;
+            if(conf.startMode) document.getElementById('cfg-start-mode').value = conf.startMode;
+            if(conf.startLimit) document.getElementById('cfg-start-limit').value = conf.startLimit;
+            if(conf.gameTime) document.getElementById('cfg-game-time').value = conf.gameTime;
 
-    window.onload = function() {
-        onValue(ref(db, 'dmz_settings'), (snap) => {
-            let data = snap.val(); let sl = document.getElementById('status-label');
-            if(data && sl) { if (data.status === 'running') { sl.innerText = "🟢 PARTITA IN CORSO"; sl.className = "status-label running"; } else { sl.innerText = "🔴 IN ATTESA DI AVVIO"; sl.className = "status-label"; } }
+            if(conf.medicActive !== undefined) { document.getElementById('cfg-medic-toggle').checked = conf.medicActive; window.toggleMedicMenu(); }
+            if(conf.contractsActive !== undefined) { document.getElementById('cfg-contracts-toggle').checked = conf.contractsActive; window.toggleContractsMenu(); }
+            if(conf.keysBases !== undefined) document.getElementById('cfg-keys-bases').checked = conf.keysBases;
+            if(conf.keysLockers !== undefined) document.getElementById('cfg-keys-lockers').checked = conf.keysLockers;
+            
+            if(conf.backpackActive !== undefined) { document.getElementById('cfg-backpack-toggle').checked = conf.backpackActive; window.toggleBackpackMenu(); }
+            if(conf.ecoActive !== undefined) { document.getElementById('cfg-eco-toggle').checked = conf.ecoActive; window.toggleEcoMenu(); }
+            if(conf.lockersActive !== undefined) { document.getElementById('cfg-lockers-toggle').checked = conf.lockersActive; window.toggleLockerMenu(); }
+
+            if(conf.gasActive !== undefined) { document.getElementById('cfg-gas-toggle').checked = conf.gasActive; window.toggleGasMenu(); }
+            if(conf.gasLethal !== undefined) document.getElementById('cfg-gas-lethal').checked = conf.gasLethal;
+            if(conf.gasTime) document.getElementById('cfg-gas-time').value = conf.gasTime;
+            if(conf.gasSteps) document.getElementById('cfg-gas-steps').value = conf.gasSteps;
+            if(conf.gasInterval) document.getElementById('cfg-gas-interval').value = conf.gasInterval;
+            if(conf.gasCenter) document.getElementById('cfg-gas-center').value = conf.gasCenter;
+            if(conf.gasRadii) document.getElementById('cfg-gas-radii').value = conf.gasRadii;
+            if(conf.gasSpeed) document.getElementById('cfg-gas-speed').value = conf.gasSpeed;
+
+            if(conf.uavActive !== undefined) { document.getElementById('cfg-uav-toggle').checked = conf.uavActive; window.toggleUavMenu(); }
+            if(conf.uavMode !== undefined) { document.getElementById('cfg-uav-mode').value = conf.uavMode; window.updateUavModeUI(); }
+            if(conf.uavOn !== undefined) document.getElementById('cfg-uav-on').value = conf.uavOn;
+            if(conf.uavOff !== undefined) document.getElementById('cfg-uav-off').value = conf.uavOff;
+
+            window.renderMoneyList(); window.renderLootList(); window.renderShopList(); window.renderStartGearList(); window.updateStartModeUI();
+            tacticalAlert("Configurazione '" + slot + "' caricata con successo!", "CARICAMENTO", true);
+        } else tacticalAlert("Nessun salvataggio trovato per: " + slot, "ERRORE");
+    };
+
+    window.masterStartGame = function() {
+        let startMode = document.getElementById('cfg-start-mode').value; let startLimit = parseInt(document.getElementById('cfg-start-limit').value) || 2; let activeStartGear = masterStartPool.filter(i => i.enabled);
+        let activeMoney = masterMoneyPool.filter(i => i.enabled); let activeLoot = masterLootPool.filter(i => i.enabled); let activeShop = masterShopPool.filter(i => i.enabled);
+        let activeContracts = []; if (document.getElementById('cfg-contracts-toggle').checked) { document.querySelectorAll('.contract-cb:checked').forEach(cb => activeContracts.push(cb.value)); }
+
+        let exfilPosMode = document.getElementById('cfg-exfil-pos').value; let generatedExfils = []; let selectedFieldCoords = fieldsDB[document.getElementById('m-field').value].boundaries;
+        if (exfilPosMode === 'random') {
+            let validBases = masterBasesDB.filter(b => isInsideArea([b.lat, b.lng], selectedFieldCoords));
+            let numP = parseInt(document.getElementById('cfg-exfil-num').value)||2; let shuffled = validBases.sort(() => 0.5 - Math.random()); let selectedBases = shuffled.slice(0, numP);
+            for(let i=0; i<selectedBases.length; i++) { let num = selectedBases[i].id.replace('B',''); generatedExfils.push({ id: "E"+num, lat: selectedBases[i].lat, lng: selectedBases[i].lng, label: "EXFIL E"+num }); }
+        } else { generatedExfils = fieldsDB[document.getElementById('m-field').value].exfils; }
+
+        let uavConfig = { enabled: document.getElementById('cfg-uav-toggle').checked, mode: document.getElementById('cfg-uav-mode').value, onTime: parseInt(document.getElementById('cfg-uav-on').value) || 30, offTime: parseInt(document.getElementById('cfg-uav-off').value) || 120, startTime: Date.now() };
+
+        let rawRadii = document.getElementById('cfg-gas-radii').value;
+        let radiiArr = rawRadii.split(',').map(r => parseInt(r.trim())).filter(r => !isNaN(r));
+        if(radiiArr.length === 0) radiiArr = [800, 400, 200, 50]; 
+        
+        let gasConfig = { 
+            enabled: document.getElementById('cfg-gas-toggle').checked, lethal: document.getElementById('cfg-gas-lethal').checked, 
+            survivalTime: parseInt(document.getElementById('cfg-gas-time').value) || 30, visibility: document.getElementById('cfg-gas-vis').checked, 
+            interval: parseInt(document.getElementById('cfg-gas-interval').value) || 10, startTime: Date.now(),
+            centerBase: document.getElementById('cfg-gas-center').value, radii: radiiArr, speed: parseFloat(document.getElementById('cfg-gas-speed').value) || 1
+        };
+
+        let maxGameMinutes = parseInt(document.getElementById('cfg-game-time').value) || 45;
+
+        update(ref(db, 'dmz_settings'), {
+            status: 'running', activeField: document.getElementById('m-field').value, 
+            gameEndTime: Date.now() + (maxGameMinutes * 60000),
+            backpack_active: document.getElementById('cfg-backpack-toggle').checked,
+            economy_active: document.getElementById('cfg-eco-toggle').checked,
+            lockers_active: document.getElementById('cfg-lockers-toggle').checked,
+            keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
+            uav_config: uavConfig, gas_config: gasConfig,
+            start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-eco-toggle').checked, pool: activeShop }, 
+            exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils },
+            lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
+            team_config: { maxPlayers: parseInt(document.getElementById('cfg-team-size').value) || 4 },
+            medic_config: { active: document.getElementById('cfg-medic-toggle').checked, bleedout_time: parseInt(document.getElementById('cfg-medic-bleedout').value) || 60, maxCures: parseInt(document.getElementById('cfg-medic-cures').value) || 2, maxRevives: parseInt(document.getElementById('cfg-medic-revives').value) || 1 }
+        });
+        
+        // V4.0: RESET EXFILS GLOBALI AL VIA
+        set(ref(db, 'dmz_exfils'), null);
+        set(ref(db, 'dmz_lockers'), null); set(ref(db, 'dmz_streaks'), null); set(ref(db, 'dmz_logs'), null); 
+        tacticalAlert("PARTITA INIZIATA SU TUTTI I TERMINALI.", "SYSTEM ONLINE", true);
+    };
+    
+    window.masterStopGame = function() { 
+        tacticalConfirm("ATTENZIONE: Terminare la Partita? Tutti i giocatori verranno disconnessi e le casse resettate.", () => {
+            update(ref(db, 'dmz_settings'), { status: 'lobby' }); 
+            set(ref(db, 'dmz_players'), null); 
         });
     };
+
+    window.onload = function() {
+        let enteredPin = prompt("INSERISCI IL PIN DELLA REGIA MASTER:");
+        if(enteredPin !== "0000") {
+            document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50px; font-family:monospace; text-shadow:0 0 20px red;'>ACCESSO NEGATO</h1>";
+            return;
+        }
+        
+        let gasSelect = document.getElementById('cfg-gas-center');
+        masterBasesDB.forEach(b => {
+            let opt = document.createElement('option');
+            opt.value = b.id; opt.innerText = `BASE ${b.id.replace('B','')}`;
+            gasSelect.appendChild(opt);
+        });
+
+        window.renderStartGearList(); window.updateStartModeUI();
+        window.renderMoneyList(); window.renderLootList(); window.renderShopList();
+        window.toggleUavMenu(); window.updateUavModeUI();
+        window.toggleBackpackMenu(); window.toggleEcoMenu(); window.toggleLockerMenu();
+
+        onValue(ref(db, 'dmz_settings'), (snapshot) => {
+            let data = snapshot.val(); let sl = document.getElementById('status-label');
+            if(data && sl) {
+                if (data.status === 'running') { sl.innerText = "🟢 PARTITA IN CORSO"; sl.className = "status-label running"; } 
+                else { sl.innerText = "🔴 IN ATTESA DI AVVIO"; sl.className = "status-label"; }
+            }
+        });
+    };
+
+    let wakeLock = null;
+    async function keepScreenAwake() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); console.log("Wake Lock attivo."); } } catch (err) { } }
+    document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') keepScreenAwake(); });
+    document.addEventListener('click', keepScreenAwake, { once: true });
 </script>
 </body>
 </html>
