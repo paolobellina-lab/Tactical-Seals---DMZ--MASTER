@@ -347,12 +347,16 @@ window.renderRareLootList = function() { const list = document.getElementById('r
         let activeMoney = masterMoneyPool.filter(i => i.enabled); let activeLoot = masterLootPool.filter(i => i.enabled); let activeRareLoot = masterRareLootPool.filter(i => i.enabled); let activeShop = masterShopPool.filter(i => i.enabled);
         let activeContracts = []; if (document.getElementById('cfg-contracts-toggle').checked) { document.querySelectorAll('.contract-cb:checked').forEach(cb => activeContracts.push(cb.value)); }
 
-        let exfilPosMode = document.getElementById('cfg-exfil-pos').value; let generatedExfils = []; let selectedFieldCoords = fieldsDB[document.getElementById('m-field').value].boundaries;
+        let exfilPosMode = document.getElementById('cfg-exfil-pos').value; let generatedExfils = []; let finalExfil = null; let selectedFieldCoords = fieldsDB[document.getElementById('m-field').value].boundaries;
         if (exfilPosMode === 'random') {
             let validBases = masterBasesDB.filter(b => isInsideArea([b.lat, b.lng], selectedFieldCoords));
             let numP = parseInt(document.getElementById('cfg-exfil-num').value)||2; let shuffled = validBases.sort(() => 0.5 - Math.random()); let selectedBases = shuffled.slice(0, numP);
             for(let i=0; i<selectedBases.length; i++) { let num = selectedBases[i].id.replace('B',''); generatedExfils.push({ id: "E"+num, lat: selectedBases[i].lat, lng: selectedBases[i].lng, label: "EXFIL E"+num }); }
-        } else { generatedExfils = fieldsDB[document.getElementById('m-field').value].exfils; }
+            let fBase = shuffled.length > numP ? shuffled[numP] : shuffled[0]; if(fBase) finalExfil = { id: "FINAL", lat: fBase.lat, lng: fBase.lng, label: "ESTRAZIONE FINALE" };
+        } else { 
+            generatedExfils = fieldsDB[document.getElementById('m-field').value].exfils; 
+            let rndB = masterBasesDB[Math.floor(Math.random() * masterBasesDB.length)]; finalExfil = { id: "FINAL", lat: rndB.lat, lng: rndB.lng, label: "ESTRAZIONE FINALE" };
+        }
 
         let uavConfig = { enabled: document.getElementById('cfg-uav-toggle').checked, mode: document.getElementById('cfg-uav-mode').value, onTime: parseInt(document.getElementById('cfg-uav-on').value) || 30, offTime: parseInt(document.getElementById('cfg-uav-off').value) || 120, startTime: Date.now() };
 
@@ -378,7 +382,7 @@ window.renderRareLootList = function() { const list = document.getElementById('r
             keys_bases: document.getElementById('cfg-keys-bases').checked, keys_lockers: document.getElementById('cfg-keys-lockers').checked,
             uav_config: uavConfig, gas_config: gasConfig,
             start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-eco-toggle').checked, pool: activeShop }, 
-            exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils },
+            exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils, finalPoint: finalExfil },
             lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, rarePool: activeRareLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
             team_config: { maxPlayers: parseInt(document.getElementById('cfg-team-size').value) || 4 },
             medic_config: { active: document.getElementById('cfg-medic-toggle').checked, bleedout_time: parseInt(document.getElementById('cfg-medic-bleedout').value) || 60, maxCures: parseInt(document.getElementById('cfg-medic-cures').value) || 2, maxRevives: parseInt(document.getElementById('cfg-medic-revives').value) || 1 }
