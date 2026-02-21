@@ -115,6 +115,12 @@
             <div id="loot-list" style="margin-top:10px; border-top:1px dashed #ff0; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
         </div>
     </div>
+<div id="rare-lockers-config" class="cfg-box" style="margin-top:15px; border-color:#0cf;">
+        <div class="cfg-label" style="color:#0cf; font-weight:bold;">💎 LOOT ARMADIETTI CHIUSI (CHIAVE):</div>
+        <div style="display:flex; gap:5px; margin-bottom:5px;"><input type="text" id="rare-loot-name" class="input-box" style="width:40%; margin:0; padding:5px; font-size:10px; border-color:#0cf; color:#0cf;" placeholder="NOME OGGETTO"><input type="number" id="rare-loot-chance" class="input-box" style="width:25%; margin:0; padding:5px; font-size:10px; border-color:#0cf; color:#0cf;" placeholder="%"><input type="number" id="rare-loot-value" class="input-box" style="width:35%; margin:0; padding:5px; font-size:10px; border-color:#0cf; color:#0cf;" placeholder="VALORE $"></div>
+        <button class="btn-deploy" style="background:#003344; border-color:#0cf; font-size:12px; padding:8px; margin:0; color:#0cf;" onclick="addRareLootItem()">+ AGGIUNGI OGGETTO RARO</button>
+        <div id="rare-loot-list" style="margin-top:10px; border-top:1px dashed #0cf; padding-top:10px; max-height:150px; overflow-y:auto;"></div>
+    </div>
     
     <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">SISTEMA RADAR (UAV) 📡</span><label class="switch"><input type="checkbox" id="cfg-uav-toggle" checked onchange="toggleUavMenu()"><span class="slider" style="background-color:#333;"></span></label></div>
     <div id="uav-settings" class="cfg-box" style="display:flex; border-color:#0ff;">
@@ -227,12 +233,13 @@
     let masterStartPool = [ { name: "Benda Medica", value: 0, enabled: true }, { name: "MASCHERA GAS SEMPLICE", value: 500, enabled: true }, { name: "Kit Medico", value: 1500, enabled: false }, { name: "CHIAVE UNIVERSALE", value: 5000, enabled: false } ];
     let masterMoneyPool = [{ amount: 0, chance: 40, enabled: true }, { amount: 500, chance: 35, enabled: true }, { amount: 2500, chance: 25, enabled: true }];
     let masterLootPool = [ { name: "VUOTO", chance: 35, value: 0, enabled: true }, { name: "CHIAVE UNIVERSALE", chance: 2, value: 5000, enabled: true }, { name: "MASCHERA GAS SEMPLICE", chance: 15, value: 500, enabled: true }, { name: "Hard Disk Segreto", chance: 10, value: 2500, enabled: true }, { name: "Benda Medica", chance: 20, value: 0, enabled: true }, { name: "ATTACCO AEREO", chance: 8, value: 4000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", chance: 5, value: 5000, enabled: true }, { name: "UAV DI DISTURBO", chance: 5, value: 2500, enabled: true } ];
+let masterRareLootPool = [ { name: "VISORE NOTTURNO", chance: 20, value: 5000, enabled: true }, { name: "CHIAVE UNIVERSALE", chance: 30, value: 8000, enabled: true } ];
     let masterShopPool = [ { name: "CHIAVE UNIVERSALE", price: 10000, enabled: true }, { name: "MASCHERA GAS COMPLETA", price: 3000, enabled: true }, { name: "Terminale UAV", price: 4000, enabled: true }, { name: "Kit Medico", price: 1500, enabled: true }, { name: "ATTACCO AEREO", price: 8000, enabled: true }, { name: "IMPULSO EMP", price: 12000, enabled: true }, { name: "LANCIO EQUIPAGGIAMENTO", price: 10000, enabled: true } ];
 
     window.updateStartModeUI = function() { document.getElementById('cfg-start-limit-box').style.display = (document.getElementById('cfg-start-mode').value === 'choice') ? 'block' : 'none'; };
     window.toggleGasMenu = function() { document.getElementById('gas-settings').style.display = document.getElementById('cfg-gas-toggle').checked ? 'block' : 'none'; };
     window.toggleExfilMenu = function() { document.getElementById('exfil-settings').style.display = document.getElementById('cfg-exfil-toggle').checked ? 'flex' : 'none'; };
-    window.toggleLockerMenu = function() { document.getElementById('locker-settings').style.display = document.getElementById('cfg-lockers-toggle').checked ? 'flex' : 'none'; };
+    window.toggleLockerMenu = function() { let on = document.getElementById('cfg-lockers-toggle').checked; document.getElementById('locker-settings').style.display = on ? 'flex' : 'none'; document.getElementById('rare-lockers-config').style.display = on ? 'flex' : 'none'; };
     window.toggleShopMenu = function() { document.getElementById('shop-settings').style.display = document.getElementById('cfg-shops-toggle').checked ? 'flex' : 'none'; };
     window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
@@ -244,6 +251,7 @@
     window.updateMoneyItem = function(idx, field, val) { masterMoneyPool[idx][field] = parseInt(val) || 0; };
     window.updateLootItem = function(idx, field, val) { masterLootPool[idx][field] = parseInt(val) || 0; };
     window.updateShopItem = function(idx, field, val) { masterShopPool[idx][field] = parseInt(val) || 0; };
+    window.updateRareLootItem = function(idx, field, val) { masterRareLootPool[idx][field] = parseInt(val) || 0; };
 
     window.renderStartGearList = function() { const list = document.getElementById('start-gear-list'); list.innerHTML = ""; masterStartPool.forEach((i, idx) => { let valStr = i.value > 0 ? `<span style="color:#8f8;">$${i.value}</span>` : `<span style="color:#aaa;">Consum.</span>`; let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0cf; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleStartGearItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} - ${valStr}</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeStartGearItem(${idx})">X</span></div>`; });  };
     window.toggleStartGearItem = function(idx) { masterStartPool[idx].enabled = !masterStartPool[idx].enabled; window.renderStartGearList(); };
@@ -259,6 +267,10 @@
     window.toggleLootItem = function(idx) { masterLootPool[idx].enabled = !masterLootPool[idx].enabled; window.renderLootList(); };
     window.addLootItem = function() { let n=document.getElementById('loot-name').value.toUpperCase(), c=parseInt(document.getElementById('loot-chance').value), v=parseInt(document.getElementById('loot-value').value)||0; if(n&&c>0){ masterLootPool.push({name:n, chance:c, value:v, enabled: true}); window.renderLootList(); } };
     window.removeLootItem = function(idx) { masterLootPool.splice(idx, 1); window.renderLootList(); };
+window.renderRareLootList = function() { const list = document.getElementById('rare-loot-list'); list.innerHTML = ""; masterRareLootPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0cf; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleRareLootItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} (<input type="number" class="cfg-input-edit" style="color:#0cf; border-color:#0cf;" value="${i.chance}" onchange="updateRareLootItem(${idx}, 'chance', this.value)">%) [$<input type="number" class="cfg-input-edit" style="color:#0cf; border-color:#0cf;" value="${i.value}" onchange="updateRareLootItem(${idx}, 'value', this.value)">]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeRareLootItem(${idx})">X</span></div>`; }); };
+    window.toggleRareLootItem = function(idx) { masterRareLootPool[idx].enabled = !masterRareLootPool[idx].enabled; window.renderRareLootList(); };
+    window.addRareLootItem = function() { let n=document.getElementById('rare-loot-name').value.toUpperCase(), c=parseInt(document.getElementById('rare-loot-chance').value), v=parseInt(document.getElementById('rare-loot-value').value)||0; if(n&&c>0){ masterRareLootPool.push({name:n, chance:c, value:v, enabled: true}); window.renderRareLootList(); } };
+    window.removeRareLootItem = function(idx) { masterRareLootPool.splice(idx, 1); window.renderRareLootList(); };
 
     window.renderShopList = function() { const list = document.getElementById('shop-list'); list.innerHTML = ""; masterShopPool.forEach((i, idx) => { let chk = i.enabled ? "checked" : "", op = i.enabled ? "1" : "0.4"; list.innerHTML += `<div style="display:flex; justify-content:space-between; font-size:12px; color:#0aa; margin-bottom:5px; align-items:center; opacity:${op};"><div style="display:flex; align-items:center; gap:8px;"><input type="checkbox" ${chk} onchange="toggleShopItem(${idx})" style="transform:scale(1.2);"><span>- ${i.name} [$<input type="number" class="cfg-input-edit" style="color:#0aa; border-color:#0aa;" value="${i.price}" onchange="updateShopItem(${idx}, 'price', this.value)">]</span></div><span style="color:red;cursor:pointer;font-weight:bold;padding:2px 5px;" onclick="removeShopItem(${idx})">X</span></div>`; }); };
     window.toggleShopItem = function(idx) { masterShopPool[idx].enabled = !masterShopPool[idx].enabled; window.renderShopList(); };
@@ -272,7 +284,7 @@
     window.saveConfig = function() {
         let slot = document.getElementById('config-slot').value;
         let conf = { 
-            loot: masterLootPool, money: masterMoneyPool, shop: masterShopPool, startPool: masterStartPool,
+            loot: masterLootPool, rareLoot: masterRareLootPool, money: masterMoneyPool, shop: masterShopPool, startPool: masterStartPool,
             teamSize: getVal('cfg-team-size', 4), bleedout: getVal('cfg-medic-bleedout', 60), cures: getVal('cfg-medic-cures', 2), revives: getVal('cfg-medic-revives', 1),
             medicActive: getChk('cfg-medic-toggle', true), contractsActive: getChk('cfg-contracts-toggle', true), 
             keysBases: getChk('cfg-keys-bases', false), keysLockers: getChk('cfg-keys-lockers', true),
@@ -292,7 +304,7 @@
         let data = localStorage.getItem('dmz_config_master_' + slot);
         if(data) {
             let conf = JSON.parse(data); 
-            masterLootPool = conf.loot || masterLootPool; masterMoneyPool = conf.money || masterMoneyPool; masterShopPool = conf.shop || masterShopPool; masterStartPool = conf.startPool || masterStartPool;
+           masterLootPool = conf.loot || masterLootPool; masterRareLootPool = conf.rareLoot || masterRareLootPool; masterMoneyPool = conf.money || masterMoneyPool; masterShopPool = conf.shop || masterShopPool; masterStartPool = conf.startPool || masterStartPool;
             
             if(conf.teamSize) document.getElementById('cfg-team-size').value = conf.teamSize;
             if(conf.bleedout) document.getElementById('cfg-medic-bleedout').value = conf.bleedout;
@@ -325,14 +337,14 @@
             if(conf.uavOn !== undefined) document.getElementById('cfg-uav-on').value = conf.uavOn;
             if(conf.uavOff !== undefined) document.getElementById('cfg-uav-off').value = conf.uavOff;
 
-            window.renderMoneyList(); window.renderLootList(); window.renderShopList(); window.renderStartGearList(); window.updateStartModeUI();
+            window.renderMoneyList(); window.renderLootList(); window.renderShopList(); window.renderStartGearList(); window.updateStartModeUI();window.renderRareLootList();
             tacticalAlert("Configurazione '" + slot + "' caricata con successo!", "CARICAMENTO", true);
         } else tacticalAlert("Nessun salvataggio trovato per: " + slot, "ERRORE");
     };
 
     window.masterStartGame = function() {
         let startMode = document.getElementById('cfg-start-mode').value; let startLimit = parseInt(document.getElementById('cfg-start-limit').value) || 2; let activeStartGear = masterStartPool.filter(i => i.enabled);
-        let activeMoney = masterMoneyPool.filter(i => i.enabled); let activeLoot = masterLootPool.filter(i => i.enabled); let activeShop = masterShopPool.filter(i => i.enabled);
+        let activeMoney = masterMoneyPool.filter(i => i.enabled); let activeLoot = masterLootPool.filter(i => i.enabled); let activeRareLoot = masterRareLootPool.filter(i => i.enabled); let activeShop = masterShopPool.filter(i => i.enabled);
         let activeContracts = []; if (document.getElementById('cfg-contracts-toggle').checked) { document.querySelectorAll('.contract-cb:checked').forEach(cb => activeContracts.push(cb.value)); }
 
         let exfilPosMode = document.getElementById('cfg-exfil-pos').value; let generatedExfils = []; let selectedFieldCoords = fieldsDB[document.getElementById('m-field').value].boundaries;
@@ -367,7 +379,7 @@
             uav_config: uavConfig, gas_config: gasConfig,
             start_gear_config: { mode: startMode, pool: activeStartGear, limit: startLimit }, shop_config: { enabled: document.getElementById('cfg-eco-toggle').checked, pool: activeShop }, 
             exfil_config: { enabled: document.getElementById('cfg-exfil-toggle').checked, numPoints: parseInt(document.getElementById('cfg-exfil-num').value)||2, waitTime: parseInt(document.getElementById('cfg-exfil-wait').value)||2, position: exfilPosMode, points: generatedExfils },
-            lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
+            lockers_config: { enabled: document.getElementById('cfg-lockers-toggle').checked, pool: activeLoot, rarePool: activeRareLoot, moneyPool: activeMoney }, contracts_config: { enabled: document.getElementById('cfg-contracts-toggle').checked, pool: activeContracts },
             team_config: { maxPlayers: parseInt(document.getElementById('cfg-team-size').value) || 4 },
             medic_config: { active: document.getElementById('cfg-medic-toggle').checked, bleedout_time: parseInt(document.getElementById('cfg-medic-bleedout').value) || 60, maxCures: parseInt(document.getElementById('cfg-medic-cures').value) || 2, maxRevives: parseInt(document.getElementById('cfg-medic-revives').value) || 1 }
         });
@@ -400,7 +412,7 @@
         });
 
         window.renderStartGearList(); window.updateStartModeUI();
-        window.renderMoneyList(); window.renderLootList(); window.renderShopList();
+        window.renderMoneyList(); window.renderLootList(); window.renderRareLootList(); window.renderShopList();
         window.toggleUavMenu(); window.updateUavModeUI();
         window.toggleBackpackMenu(); window.toggleEcoMenu(); window.toggleLockerMenu();
 
