@@ -169,11 +169,22 @@
         <div style="border-top:1px solid #444; margin-top:10px; padding-top:10px;"><label style="color:#ffd700;"><input type="checkbox" id="cfg-keys-bases"> RICHIEDI CHIAVI PER LE BASI</label></div>
     </div>
 
-    <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">ESFILTRAZIONE (E/C) 🚁</span><label class="switch"><input type="checkbox" id="cfg-exfil-toggle" checked onchange="toggleExfilMenu()"><span class="slider"></span></label></div>
+  <div class="toggle-row"><span style="color:#0ff; font-weight:bold;">ESFILTRAZIONE (E) 🚁</span><label class="switch"><input type="checkbox" id="cfg-exfil-toggle" checked onchange="toggleExfilMenu()"><span class="slider"></span></label></div>
     <div id="exfil-settings" class="cfg-box" style="display:flex;">
-        <div class="cfg-label">NUMERO DI PUNTI ATTIVI:</div><input type="number" id="cfg-exfil-num" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="1" max="10">
-        <div class="cfg-label">POSIZIONE ESTRAZIONI:</div><select id="cfg-exfil-pos" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;"><option value="defined">C: Punti Mappa Standard</option><option value="random">E: Punti Casuali (Sceglie Basi in area)</option></select>
-        <div class="cfg-label">TEMPO ATTESA ELICOTTERO (MINUTI):</div><input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
+        <div class="cfg-label">MODALITÀ ESTRAZIONI:</div>
+        <select id="cfg-exfil-pos" class="input-box" style="width:100%; margin:0; padding:8px; font-size:14px;" onchange="toggleManualExfils()">
+            <option value="random" selected>CASUALI (Sceglie tra E1-E20)</option>
+            <option value="manual">SCELTA MANUALE (Spunta quali usare)</option>
+        </select>
+        
+        <div id="lbl-exfil-num" class="cfg-label">NUMERO EXFIL (Se casuali):</div>
+        <input type="number" id="cfg-exfil-num" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="1" max="20">
+        
+        <div id="manual-exfil-box" style="display:none; flex-wrap:wrap; justify-content:space-between; margin-top:10px; border-top:1px dashed #0ff; padding-top:10px;">
+            </div>
+
+        <div class="cfg-label" style="margin-top:10px;">TEMPO ATTESA ELICOTTERO (MINUTI):</div>
+        <input type="number" id="cfg-exfil-wait" class="input-box" style="width:100%; margin:0; padding:8px;" value="2" min="0" max="10">
     </div>
 
     <button class="btn-deploy" style="background:linear-gradient(135deg, #008800 0%, #003300 100%); border-color:#0f0; margin-top:40px; box-shadow: 0 0 15px #0f0;" onclick="masterStartGame()">🚀 AVVIA PARTITA</button>
@@ -216,7 +227,7 @@
     ];
     
     const fieldsDB = {
-        "campo1": { boundaries: [ [45.679223, 9.892754], [45.679053, 9.894369], [45.678634, 9.896859], [45.678212, 9.903234], [45.680357, 9.902110], [45.679790, 9.899845], [45.679941, 9.897482], [45.679488, 9.894333] ], exfils: [ { id: "C1", lat: 45.6800, lng: 9.8966, label: "EXFIL C1" } ] },
+        "campo1": { boundaries: [ [45.679223271161206, 9.892754719006636], [45.679053080947185, 9.894369628150011], [45.679488010465164, 9.894333540794852], [45.67994184635777, 9.897482162532492], [45.67979056813591, 9.89984588429542], [45.68035785935887, 9.902110365831659], [45.67821215309606, 9.903234794745936], [45.67863434946003, 9.896859606506366] ], exfils: [], center: [45.679141, 9.896634] },
         "campo2": { boundaries: [[45.001, 8.999], [45.001, 9.001], [44.999, 9.001], [44.999, 8.999]], exfils: [] },
         "campo5": { boundaries: [[45.7014, 9.8256], [45.7014, 9.8296], [45.6974, 9.8296], [45.6974, 9.8256]], exfils: [ { id: "C1", lat: 45.6998, lng: 9.8276, label: "EXFIL C1" } ] }
     };
@@ -243,7 +254,13 @@
     window.toggleExfilMenu = function() { document.getElementById('exfil-settings').style.display = document.getElementById('cfg-exfil-toggle').checked ? 'flex' : 'none'; };
     window.toggleLockerMenu = function() { let on = document.getElementById('cfg-lockers-toggle').checked; document.getElementById('locker-settings').style.display = on ? 'flex' : 'none'; document.getElementById('rare-lockers-config').style.display = document.getElementById('cfg-keys-lockers').checked ? 'flex' : 'none'; };
     window.toggleRareLockersMenu = function() { document.getElementById('rare-lockers-config').style.display = document.getElementById('cfg-keys-lockers').checked ? 'flex' : 'none'; };
-    window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
+   window.toggleManualExfils = function() {
+        let mode = document.getElementById('cfg-exfil-pos').value;
+        document.getElementById('manual-exfil-box').style.display = mode === 'manual' ? 'flex' : 'none';
+        document.getElementById('lbl-exfil-num').style.display = mode === 'random' ? 'block' : 'none';
+        document.getElementById('cfg-exfil-num').style.display = mode === 'random' ? 'block' : 'none';
+    }; 
+window.toggleContractsMenu = function() { document.getElementById('contracts-settings').style.display = document.getElementById('cfg-contracts-toggle').checked ? 'flex' : 'none'; };
     window.toggleMedicMenu = function() { document.getElementById('medic-settings').style.display = document.getElementById('cfg-medic-toggle').checked ? 'flex' : 'none'; };
     window.toggleUavMenu = function() { document.getElementById('uav-settings').style.display = document.getElementById('cfg-uav-toggle').checked ? 'flex' : 'none'; };
     window.updateUavModeUI = function() { document.getElementById('uav-periodic-box').style.display = (document.getElementById('cfg-uav-mode').value === 'periodic') ? 'block' : 'none'; };
@@ -385,14 +402,20 @@
                     let num = b.id.replace('B','');
                     generatedExfils.push({ id: "E"+num, lat: b.lat, lng: b.lng, label: "EXFIL E"+num });
                 });
-
-                let fBase = shuffled.length > numP ? shuffled[numP] : (shuffled[0] || masterBasesDB[0]);
-                finalExfil = { id: "FINAL", lat: fBase.lat, lng: fBase.lng, label: "ESTRAZIONE FINALE" };
-            } else {
-                generatedExfils = selectedField.exfils || [];
-                let rndB = validBases[Math.floor(Math.random() * validBases.length)];
-                finalExfil = { id: "FINAL", lat: rndB.lat, lng: rndB.lng, label: "ESTRAZIONE FINALE" };
+            } else if (exfilPosMode === 'manual') {
+                let checkedBases = Array.from(document.querySelectorAll('.manual-exfil-cb:checked')).map(cb => cb.value);
+                if (checkedBases.length === 0 && document.getElementById('cfg-exfil-toggle').checked) {
+                    return tacticalAlert("Se hai scelto l'Estrazione Manuale, devi spuntare almeno una base E1-E20!");
+                }
+                let selectedBases = masterBasesDB.filter(b => checkedBases.includes(b.id));
+                selectedBases.forEach(b => {
+                    let num = b.id.replace('B','');
+                    generatedExfils.push({ id: "E"+num, lat: b.lat, lng: b.lng, label: "EXFIL E"+num });
+                });
             }
+            
+            // L'elicottero finale ora lo gestisce in automatico il Player col Gas
+            finalExfil = null;
 
             let exfilWait = parseInt(document.getElementById('cfg-exfil-wait').value) || 2;
 
@@ -412,6 +435,12 @@
             let shopPoolList = []; masterShopPool.forEach(i => { if(i.enabled) shopPoolList.push(i); });
             let contractTypes = []; document.querySelectorAll('.contract-cb:checked').forEach(cb => contractTypes.push(cb.value));
 
+            // PULIZIA DEL VECCHIO CAMPO DI BATTAGLIA
+            set(ref(db, 'dmz_exfils'), null);
+            set(ref(db, 'dmz_streaks'), null);
+            set(ref(db, 'dmz_logs'), null);
+
+            // INVIO NUOVI DATI A FIREBASE
             set(ref(db, 'dmz_settings'), {
                 status: 'running',
                 gameEndTime: gameEndTime,
@@ -476,12 +505,14 @@
     };
     
     window.masterStopGame = function() { 
-        tacticalConfirm("ATTENZIONE: Terminare la Partita? Tutti i giocatori verranno disconnessi e le casse resettate.", () => {
+        tacticalConfirm("ATTENZIONE: Terminare la Partita? Tutti i giocatori verranno disconnessi e la mappa resettata.", () => {
             update(ref(db, 'dmz_settings'), { status: 'lobby' }); 
             set(ref(db, 'dmz_players'), null); 
+            set(ref(db, 'dmz_exfils'), null); 
+            set(ref(db, 'dmz_streaks'), null); 
+            set(ref(db, 'dmz_logs'), null); 
         });
     };
-
     window.onload = function() {
         let enteredPin = prompt("INSERISCI IL PIN DELLA REGIA MASTER:");
         if(enteredPin !== "0000") {
@@ -494,6 +525,11 @@
             let opt = document.createElement('option');
             opt.value = b.id; opt.innerText = `BASE ${b.id.replace('B','')}`;
             gasSelect.appendChild(opt);
+        });
+let exBox = document.getElementById('manual-exfil-box');
+        masterBasesDB.forEach(b => {
+            let num = b.id.replace('B','');
+            exBox.innerHTML += `<label style="color:#0ff; font-size:14px; width:45%; display:flex; align-items:center; gap:5px; margin-bottom:5px;"><input type="checkbox" class="manual-exfil-cb" value="${b.id}" style="transform:scale(1.2);"> E${num}</label>`;
         });
 
         window.renderStartGearList(); window.updateStartModeUI();
